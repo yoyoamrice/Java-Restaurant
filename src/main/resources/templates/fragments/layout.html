@@ -43,9 +43,9 @@
             <span th:text="#{home}">Home</span>
           </li>
 
-          <li th:replace="~{::menuItem ('/owners/find','owners','find owners','search',#{findOwners})}">
+          <li th:replace="~{::menuItem ('/schools','schools','list of schools','graduation-cap',#{findSchools})}">
             <span class="fa fa-search" aria-hidden="true"></span>
-            <span th:text="#{findOwners}">Find owners</span>
+            <span th:text="#{findSchools}">Find Schools</span>
           </li>
 
           <li th:replace="~{::menuItem ('/vets.html','vets','veterinarians','th-list',#{vets})}">
@@ -53,7 +53,7 @@
             <span th:text="#{vets}">Veterinarians</span>
           </li>
 
-          <li
+         <li
             th:replace="~{::menuItem ('/oups','error','trigger a RuntimeException to see how it is handled','exclamation-triangle',#{error})}">
             <span class="fa exclamation-triangle" aria-hidden="true"></span>
             <span th:text="#{error}">Error</span>
