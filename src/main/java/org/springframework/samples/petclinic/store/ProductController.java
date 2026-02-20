@@ -29,6 +29,4 @@ private final ProductRepository productRepository;
 
 		return "products/productList";
 	}
-
-
 }

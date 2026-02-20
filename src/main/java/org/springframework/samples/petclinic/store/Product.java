@@ -35,3 +35,4 @@ public class Product {
 	private List<ProductCategory> categories = new ArrayList<>();
 
 }
+

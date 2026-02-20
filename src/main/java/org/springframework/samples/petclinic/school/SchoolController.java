@@ -43,7 +43,6 @@ public class SchoolController {
 		return "redirect:/schools";
 	}
 
-
 	@GetMapping("/schools")
 	public String showSchoolList(@RequestParam(defaultValue = "1") int page, Model model) {
 		// Pagination setup (5 items per page)

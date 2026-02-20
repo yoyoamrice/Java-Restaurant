@@ -27,3 +27,5 @@ public interface ProductRepository extends Repository<Product, Long> {
 	Optional<Product> findByDomain(String domain);
 
 }
+
+
