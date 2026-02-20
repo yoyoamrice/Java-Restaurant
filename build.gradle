@@ -40,6 +40,8 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-validation'
   implementation 'javax.cache:cache-api'
   implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
+  implementation 'org.springframework.boot:spring-boot-starter-security'
+  implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
   runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
   runtimeOnly "org.webjars:webjars-locator-lite:${webjarsLocatorLiteVersion}"
   runtimeOnly "org.webjars.npm:bootstrap:${webjarsBootstrapVersion}"
@@ -57,6 +59,7 @@ dependencies {
   testImplementation 'org.springframework.boot:spring-boot-docker-compose'
   testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
   testImplementation 'org.testcontainers:testcontainers-mysql'
+  testImplementation 'org.springframework.security:spring-security-test'
   checkstyle "io.spring.javaformat:spring-javaformat-checkstyle:${springJavaformatCheckstyleVersion}"
   checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
 }
@@ -89,6 +92,3 @@ checkFormatAotTest.enabled = false
 
 formatAot.enabled = false
 formatAotTest.enabled = false
-compileOnly 'org.projectlombok:lombok'
-annotationProcessor 'org.projectlombok:lombok'
-

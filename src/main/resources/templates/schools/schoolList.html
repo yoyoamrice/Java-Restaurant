@@ -6,6 +6,11 @@
 
 <h2 th:text="#{schools}">Schools</h2>
 
+<a th:href="@{/schools/new}" class="btn btn-primary mb-3">
+  <span class="fa fa-plus"></span>
+  <span th:text="#{addSchool}">Add School</span>
+</a>
+
 <table id="schools" class="table table-striped">
   <thead>
   <tr>

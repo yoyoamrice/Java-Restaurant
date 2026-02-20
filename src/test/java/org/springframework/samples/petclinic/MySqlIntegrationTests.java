@@ -29,6 +29,8 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.school.SchoolRepository;
+import org.springframework.samples.petclinic.user.UserRepository;
 import org.springframework.samples.petclinic.vet.VetRepository;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.aot.DisabledInAotMode;
@@ -40,9 +42,7 @@ import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("mysql")
-@Testcontainers(disabledWithoutDocker = true)
-@DisabledInNativeImage
-@DisabledInAotMode
+@Testcontainers
 class MySqlIntegrationTests {
 
 	@ServiceConnection
@@ -56,12 +56,25 @@ class MySqlIntegrationTests {
 	private VetRepository vets;
 
 	@Autowired
+	private UserRepository users;
+
+	@Autowired
+	private SchoolRepository schools;
+
+	@Autowired
 	private RestTemplateBuilder builder;
 
 	@Test
 	void testFindAll() {
 		vets.findAll();
 		vets.findAll(); // served from cache
+		assertThat(vets.findAll()).isNotEmpty();
+		users.findAll();
+		users.findAll(); // served from cache
+		assertThat(users.findAll()).isNotEmpty();
+		schools.findAll();
+		schools.findAll(); // served from cache
+		assertThat(schools.findAll()).isNotEmpty();
 	}
 
 	@Test

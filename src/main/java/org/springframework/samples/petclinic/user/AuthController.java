@@ -1,0 +1,97 @@
+package org.springframework.samples.petclinic.user;
+
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.school.School;
+import org.springframework.samples.petclinic.school.SchoolRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+
+import java.util.Optional;
+
+@Controller
+public class AuthController {
+	private final UserService userService;
+	private final SchoolRepository schoolRepository;
+
+	public AuthController(UserService userService, SchoolRepository schoolRepository) {
+		this.userService = userService;
+		this.schoolRepository = schoolRepository;
+	}
+
+	@GetMapping("/register")
+	public String initRegisterForm(Model model) {
+		model.addAttribute("user", new User());
+		return "auth/registerForm";
+	}
+
+	@PostMapping("/register")
+	public String registerUser(@Valid User user, BindingResult result){
+		if(result.hasErrors()) {
+			return "auth/registerForm";
+		}
+
+		try {
+			userService.registerNewUser(user);
+		} catch(RuntimeException e) {
+			result.rejectValue("email", "duplicate", "This email is already registered");
+			return "auth/registerForm";
+		}
+
+		// Marc's project will redirect a new user to their school
+		String email = user.getEmail();
+		Optional<School> school = findSchoolByRecursiveDomain(email);
+
+		if(school.isPresent()) {
+			return "redirect:/schools/" + school.get().getDomain().substring(0, school.get().getDomain().length() - 4);
+		} else {
+			// Redirect a user to the homepage if their school was not found.
+			return "redirect:/";
+		}
+	}
+
+	private Optional<School> findSchoolByRecursiveDomain(String email) {
+		// 1. Extract the initial domain (e.g., "student.kirkwood.edu")
+		String domain = email.substring(email.indexOf("@") + 1);
+
+		// 2. Loop while the domain is valid (has at least one dot)
+		while (domain.contains(".")) {
+			// 3. Check Database
+			Optional<School> school = schoolRepository.findByDomain(domain);
+			if (school.isPresent()) {
+				return school; // Found match (e.g., "kirkwood.edu")
+			}
+
+			// 4. Strip the first part (e.g., "student.kirkwood.edu" -> "kirkwood.edu")
+			int dotIndex = domain.indexOf(".");
+			domain = domain.substring(dotIndex + 1);
+		}
+
+		return Optional.empty();
+	}
+
+//	@PostMapping("/login")
+//	public ResponseEntity<String> authenticateUser(@RequestBody LoginRequest loginRequest) {
+	// 1. Create a token with the user's plain text credentials
+//		Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
+//			loginRequest.getEmail(),
+//			loginRequest.getPassword()
+//		);
+
+	// 2. Process authentication using the manager (which uses your UserDetailsService)
+//		Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+	// 3. Optional: Set the authenticated user in the security context (needed for session-based security)
+	// Since your app is stateless, you would typically generate a JWT token here.
+	// For testing, we'll confirm success.
+
+	// If the line above didn't throw an exception, authentication succeeded.
+//		return new ResponseEntity<>("User logged in successfully!", HttpStatus.OK);
+//	}
+}
