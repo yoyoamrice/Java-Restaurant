@@ -17,6 +17,58 @@
   <link th:href="@{/webjars/font-awesome/css/font-awesome.min.css}" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/resources/css/petclinic.css}" />
 
+  <style>
+    .navbar-nav button.nav-link {
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+      padding: 28px 8px;
+      display: flex;
+      align-items: center;
+      text-transform: uppercase;
+      font-size: 14px;
+      font-family: 'montserratregular', sans-serif;
+    }
+    @media (max-width: 991.98px) {
+      .navbar-nav form {
+        width: 100%;
+      }
+      .navbar-nav button.nav-link {
+        padding: 28px 20px;
+        width: 100%;
+        justify-content: flex-start; /* Moves icon/text to the left */
+        text-align: left; /* Fallback for older browsers */
+      }
+    }
+  </style>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script>
+    $(document).ready(function(){
+      $('.navbar-nav button.nav-link').hover(
+        function() {
+          // Code to execute on mouse enter (function_in)
+          $(this).css("background-color", "#6db33f");
+        },
+        function() {
+          // Code to execute on mouse leave (function_out)
+          $(this).css("background-color", "rgba(0, 0, 0, 0)");
+        }
+      );
+
+      const $flash = $('.flash-message');
+      if ($flash.length) {
+        setTimeout(function() {
+          // slideUp creates a smooth "disappearing" animation
+          $flash.slideUp(500, function() {
+            // Once animation is done, remove from DOM
+            $(this).remove();
+          });
+        }, 10000);
+      }
+
+    });
+  </script>
 </head>
 
 <body>
@@ -51,12 +103,6 @@
           <span class="fa fa-search" aria-hidden="true"></span>
           <span th:text="#{findSchools}">Schools</span>
         </li>
-
-        <li th:replace="~{::menuItem ('/products','products','list of products', 'shopping-cart', #{findProducts})}">
-          <span class="fa fa-search" aria-hidden="true"></span>
-          <span>Products</span>
-        </li>
-
 
         <!--          <li th:replace="~{::menuItem ('/owners/find','owners','find owners','search',#{findOwners})}">-->
         <!--            <span class="fa fa-search" aria-hidden="true"></span>-->
@@ -118,6 +164,30 @@
 </nav>
 <div class="container-fluid">
   <div class="container xd-container">
+
+    <div th:if="${messageSuccess}"
+         class="alert alert-success alert-dismissible fade show flash-message"
+         role="alert">
+      <i class="fa fa-check-circle"></i>
+      <span th:text="${messageSuccess}">Success</span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${messageWarning}"
+         class="alert alert-warning alert-dismissible fade show flash-message"
+         role="alert">
+      <i class="fa fa-exclamation-circle"></i>
+      <span th:text="${messageWarning}">Warning</span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${messageDanger}"
+         class="alert alert-danger alert-dismissible fade show flash-message"
+         role="alert">
+      <i class="fa fa-times-circle"></i>
+      <span th:text="${messageDanger}">Error</span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
     <th:block th:insert="${template}" />
 

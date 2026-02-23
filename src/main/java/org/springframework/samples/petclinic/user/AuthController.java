@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public String registerUser(@Valid User user, BindingResult result){
+	public String registerUser(@Valid User user, BindingResult result, RedirectAttributes redirectAttributes){
 		if(result.hasErrors()) {
 			return "auth/registerForm";
 		}
@@ -49,10 +50,14 @@ public class AuthController {
 		Optional<School> school = findSchoolByRecursiveDomain(email);
 
 		if(school.isPresent()) {
+			redirectAttributes.addFlashAttribute("messageSuccess",
+				"Your user account has been created. You have been redirected to " + school.get().getName() + "'s school page.");
 			return "redirect:/schools/" + school.get().getDomain().substring(0, school.get().getDomain().length() - 4);
 		} else {
-			// Redirect a user to the homepage if their school was not found.
-			return "redirect:/";
+			redirectAttributes.addFlashAttribute("messageWarning",
+				"Your user account has been created, but we could not find a school matching your email domain");
+			// Redirect a user to the schools page if their school was not found.
+			return "redirect:/schools";
 		}
 	}
 
