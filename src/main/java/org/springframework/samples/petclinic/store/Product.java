@@ -1,6 +1,10 @@
 package org.springframework.samples.petclinic.store;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -34,5 +38,10 @@ public class Product {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "id", fetch = FetchType.EAGER)
 	private List<ProductCategory> categories = new ArrayList<>();
 
+
+
+
+
 }
+
 

@@ -28,5 +28,6 @@ private final ProductRepository productRepository;
 		model.addAttribute("listProducts", productPage.getContent());
 
 		return "products/productList";
+
 	}
 }
