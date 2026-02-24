@@ -4,7 +4,7 @@
 
 <body>
 
-<h2>Products</h2>
+<h2 th:text="#{products}">Products</h2>
 
 
 <table id="products" class="table table-striped">
@@ -12,8 +12,9 @@
   <tr>
     <th th:text="#{name}">Name</th>
     <th th:text="#{domain}">Domain</th>
-    <th>Quantity</th>
-    <th>Price</th>
+    <th th:text="#{quantity}">Quantity</th>
+    <th th:text="#{price}">Price</th>
+    <th th:text="#{ProductCategory}">Category</th>
   </tr>
   </thead>
   <tbody>
@@ -24,8 +25,9 @@
     <td th:text="${product.domain}" />
     <td th:text="${product.quantity}" />
     <td th:text="${product.price}" />
+    <td th:text = "${product.getCategory().getName()}"/>
 
-  </tr>
+
   </tbody>
 </table>
 

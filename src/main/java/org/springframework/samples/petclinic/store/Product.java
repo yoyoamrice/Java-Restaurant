@@ -35,8 +35,9 @@ public class Product {
 	private int quantity;
 	@Column
 	private double price;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "id", fetch = FetchType.EAGER)
-	private List<ProductCategory> categories = new ArrayList<>();
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "product_category_id")
+	private ProductCategory category;
 
 
 

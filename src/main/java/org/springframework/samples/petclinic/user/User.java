@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.samples.petclinic.model.BaseEntity;
 
 import java.util.Set;
 
@@ -13,10 +14,7 @@ import java.util.Set;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
-public class User {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+public class User extends BaseEntity {
 
 	@Column(name="first_name", nullable = true, length = 50)
 	private String firstName;

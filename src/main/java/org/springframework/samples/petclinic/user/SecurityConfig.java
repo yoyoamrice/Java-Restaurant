@@ -35,7 +35,7 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET).permitAll()
 
 				// Allows guest users to make POST requests
-				.requestMatchers("/register", "/login", "/schools/new", "/owners/new").permitAll()
+				.requestMatchers("/register-student", "/login", "/schools/new", "/owners/new").permitAll()
 
 				// PROTECTED CATCH-ALL (This protects unlisted POST/PUT/DELETE, etc.)
 				.anyRequest().authenticated()

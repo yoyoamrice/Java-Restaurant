@@ -52,7 +52,7 @@ class AuthControllerTest {
 		// Repository does NOT know "student.kirkwood.edu"
 		given(schoolRepository.findByDomain("student.kirkwood.edu")).willReturn(Optional.empty());
 
-		given(userService.registerNewUser(any(User.class))).willReturn(new User());
+		given(userService.registerNewStudent(any(User.class))).willReturn(new User());
 
 		// MOCK THE LOGIN-When the controller asks to authenticate, return a dummy "Success" token
 //		given(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))

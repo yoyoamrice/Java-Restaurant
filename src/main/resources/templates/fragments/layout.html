@@ -104,6 +104,11 @@
           <span th:text="#{findSchools}">Schools</span>
         </li>
 
+        <li th:replace="~{::menuItem ('/products','products','list of products','shopping-cart',#{findProducts})}">
+          <span class="fa fa-search" aria-hidden="true"></span>
+          <span th:text="#{findProducts}">Products</span>
+        </li>
+
         <!--          <li th:replace="~{::menuItem ('/owners/find','owners','find owners','search',#{findOwners})}">-->
         <!--            <span class="fa fa-search" aria-hidden="true"></span>-->
         <!--            <span th:text="#{findOwners}">Find owners</span>-->
