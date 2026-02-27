@@ -6,6 +6,8 @@ import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.samples.petclinic.store.Product;
+import org.springframework.samples.petclinic.store.ProductRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.samples.petclinic.school.School;
 import org.springframework.samples.petclinic.school.SchoolRepository;
@@ -55,4 +57,5 @@ public class UniqueDomainValidator implements ConstraintValidator<UniqueDomain, 
 
 		return true;
 	}
+
 }

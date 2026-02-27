@@ -1,14 +1,19 @@
 package org.springframework.samples.petclinic.store;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.school.School;
 import org.springframework.samples.petclinic.school.SchoolRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
 @Controller
 public class ProductController {
 private final ProductRepository productRepository;
@@ -30,4 +35,23 @@ private final ProductRepository productRepository;
 		return "products/productList";
 
 	}
+	@GetMapping("/products/new")
+	public String initCreationForm(Map<String, Product> model) {
+		// Instaniate a default object
+		Product product = new Product();
+		// Add school to input model so Thymeleaf can bind data to it
+		model.put("product", product);
+		return "products/createOrUpdateProductForm";
+	}
+	@PostMapping("/products/new")
+	public String processCreationForm(@Valid Product product, BindingResult result) {
+
+		if (result.hasErrors()) {
+			return "products/createOrUpdateProductForm";
+		}
+
+		productRepository.save(product);
+		return "redirect:/products";
+	}
+
 }

@@ -5,7 +5,10 @@
 <body>
 
 <h2 th:text="#{products}">Products</h2>
-
+<a th:href="@{/products/new}" class="btn btn-primary mb-3">
+  <span class="fa fa-plus"></span>
+  <span th:text="#{addProduct}">Add Product</span>
+</a>
 
 <table id="products" class="table table-striped">
   <thead>
@@ -57,8 +60,8 @@
       <a th:if="${currentPage < totalPages}" th:href="@{'/products?page=__${totalPages}__'}" th:title="#{last}"
          class="fa fa-fast-forward"></a>
       <span th:unless="${currentPage < totalPages}" th:title="#{last}" class="fa fa-fast-forward"></span>
-    </span>
+        </span>
+
 </div>
 </body>
-
 </html>

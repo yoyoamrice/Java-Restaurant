@@ -16,7 +16,6 @@ public interface ProductRepository extends Repository<Product, Long> {
 
 	@Transactional(readOnly = true)
 	Page<Product> findAll(Pageable pageable);
-
 	void save(Product product);
 
 	@Transactional(readOnly = true)
