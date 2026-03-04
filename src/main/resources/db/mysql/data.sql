@@ -223,3 +223,8 @@ VALUES
   (2, 1, 4, 1, 120.45),
   (3, 2, 3, 1, 499.99),
   (4, 2, 9, 3, 11.10);
+
+INSERT IGNORE INTO subscriptions (name, description, monthly_price, annual_price) VALUES
+('Free', 'Get started with 10 free leagues for your college or university.', 0, 0),
+('Pro', 'Create up to 25 leagues for your college or university.', 25, 250);
+
