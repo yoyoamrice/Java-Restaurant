@@ -4,9 +4,6 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.school.School;
-import org.springframework.samples.petclinic.school.SchoolRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,10 +16,12 @@ public class ProductController {
 private final ProductRepository productRepository;
 
     public ProductController(ProductRepository productRepository) {
+
 		this.productRepository = productRepository;
     }
 	@GetMapping("/products")
-	public String showProductList(@RequestParam(defaultValue = "1") int page, Model model) {
+	public String showProductList(
+		@RequestParam(defaultValue = "1") int page, Model model) {
 		// Pagination setup (5 items per page)
 		Pageable pageable = PageRequest.of(page - 1, 5);
 		Page<Product> productPage = productRepository.findAll(pageable);
@@ -42,6 +41,16 @@ private final ProductRepository productRepository;
 		// Add school to input model so Thymeleaf can bind data to it
 		model.put("product", product);
 		return "products/createOrUpdateProductForm";
+	}
+
+	@GetMapping("/products/{id}")
+	public String showProductDetails(@PathVariable Long id, Model model) {
+
+		Product product = productRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + id));
+
+		model.addAttribute("product", product);
+		return "products/objectDetails";
 	}
 	@PostMapping("/products/new")
 	public String processCreationForm(@Valid Product product, BindingResult result) {

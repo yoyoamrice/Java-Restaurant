@@ -35,14 +35,33 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET).permitAll()
 
 				// Allows guest users to make POST requests
-				.requestMatchers("/register-student", "/login", "/products/new","/schools/new", "/owners/new").permitAll()
+				.requestMatchers("/register-student",
+					"/login",
+					"/schools/new",
+					"/owners/new",
+					"/products/new"
+				).permitAll()
 
 				// PROTECTED CATCH-ALL (This protects unlisted POST/PUT/DELETE, etc.)
 				.anyRequest().authenticated()
 			)
 			// Ensure all auto-challenge mechanisms are disabled
 			.httpBasic(AbstractHttpConfigurer::disable) // Disable the login popup
-			.formLogin(AbstractHttpConfigurer::disable); // Stop formLogin redirect
+			.formLogin(form -> form
+				.loginPage("/login") // Tells Spring where your custom HTML is
+				.usernameParameter("email") // Tells your security configuration to look for email instead of username.
+				.defaultSuccessUrl("/login-success", true) // Where to go after successful login
+				.failureHandler((request, response, exception) -> {
+					request.getSession().setAttribute("LAST_EMAIL", request.getParameter("email"));
+					response.sendRedirect("/login?error");
+				})
+				.permitAll()
+			)
+			.logout(logout -> logout
+				.logoutUrl("/logout")
+				.logoutSuccessUrl("/login?logout") // Triggers the green alert box
+				.permitAll()
+			);
 
 		return http.build();
 	}

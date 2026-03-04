@@ -1,27 +1,21 @@
 package org.springframework.samples.petclinic.store;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.samples.petclinic.model.NamedEntity;
 import org.springframework.samples.petclinic.validation.UniqueDomain;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "product_categories")
-@UniqueDomain
 @Getter
 @Setter
 
-public class ProductCategory {
-	@Getter
-	@Setter
-	@Id
-	@Column
-	private Long id;
-	@Column
-	private String name;
-
+public class ProductCategory extends NamedEntity {
+	@OneToMany(mappedBy = "productCategory")
+	private List<Product> products = new ArrayList<>();
 }
 

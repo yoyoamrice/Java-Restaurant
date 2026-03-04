@@ -56,34 +56,35 @@ CREATE TABLE IF NOT EXISTS visits (
 
 
 CREATE TABLE IF NOT EXISTS users (
-                                   id INT AUTO_INCREMENT PRIMARY KEY,
-                                   first_name VARCHAR(50),
-                                   last_name VARCHAR(50),
-                                   nickname VARCHAR(50),
-                                   nickname_is_flagged TINYINT DEFAULT 0,
-                                   email VARCHAR(255) NOT NULL,
-                                   public_email TINYINT DEFAULT 0,
-                                   phone VARCHAR(255),
-                                   public_phone TINYINT DEFAULT 0,
-                                   password_hash VARCHAR(255),
-                                   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                   deleted_at DATETIME,
-                                   UNIQUE INDEX idx_users_email (email),
-                                   INDEX idx_users_name (last_name, first_name)
-);
+                                     id INT AUTO_INCREMENT PRIMARY KEY,
+                                     first_name VARCHAR(50),
+                                     last_name VARCHAR(50),
+                                     nickname VARCHAR(50),
+                                     nickname_is_flagged TINYINT DEFAULT 0,
+                                     email VARCHAR(255) NOT NULL,
+                                     public_email TINYINT DEFAULT 0,
+                                     phone VARCHAR(255),
+                                     public_phone TINYINT DEFAULT 0,
+                                     preferred_language varchar(50) null,
+                                     password_hash VARCHAR(255),
+                                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                     deleted_at DATETIME,
+                                     UNIQUE INDEX idx_users_email (email),
+                                     INDEX idx_users_name (last_name, first_name)
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS roles (
                                    id INT AUTO_INCREMENT PRIMARY KEY,
                                    name VARCHAR(50) NOT NULL UNIQUE,
                                    description VARCHAR(255)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS permissions (
                                          id INT AUTO_INCREMENT PRIMARY KEY,
                                          name VARCHAR(100) NOT NULL UNIQUE,
                                          description VARCHAR(255)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS user_roles (
                                         user_id INT NOT NULL,
@@ -91,7 +92,7 @@ CREATE TABLE IF NOT EXISTS user_roles (
                                         PRIMARY KEY (user_id, role_id),
                                         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
                                         FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS permission_role (
                                              permission_id INT NOT NULL,
@@ -99,7 +100,7 @@ CREATE TABLE IF NOT EXISTS permission_role (
                                              PRIMARY KEY (permission_id, role_id),
                                              FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE,
                                              FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS schools (
                                      id INT AUTO_INCREMENT PRIMARY KEY,
@@ -110,7 +111,7 @@ CREATE TABLE IF NOT EXISTS schools (
                                      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                      deleted_at DATETIME DEFAULT NULL,
                                      UNIQUE INDEX idx_schools_domain (domain)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS locations (
                                        id INT AUTO_INCREMENT PRIMARY KEY,
@@ -127,4 +128,72 @@ CREATE TABLE IF NOT EXISTS locations (
                                        deleted_at DATETIME DEFAULT NULL,
                                        CONSTRAINT fk_locations_school FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE,
                                        CONSTRAINT fk_locations_parent FOREIGN KEY (parent_location_id) REFERENCES locations(id) ON DELETE SET NULL
-);
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS departments (
+                           id INT PRIMARY KEY AUTO_INCREMENT,
+                           name VARCHAR(255),
+                           status VARCHAR(100)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS employees (
+                         id INT PRIMARY KEY AUTO_INCREMENT,
+                         departments_id INT,
+                         users_id INT,
+                         hire_date DATE,
+                         status VARCHAR(100),
+                         FOREIGN KEY (departments_id) REFERENCES departments(id),
+                         FOREIGN KEY (users_id) REFERENCES users(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS product_categories (
+                                  id INT PRIMARY KEY AUTO_INCREMENT,
+                                  name VARCHAR(255)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS products (
+                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        name VARCHAR(255),
+                        domain VARCHAR(150),
+                        product_category_id INT,
+                        quantity INT,
+                        price DECIMAL(10,2),
+                        FOREIGN KEY (product_category_id) REFERENCES product_categories(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS suppliers (
+                         id INT PRIMARY KEY AUTO_INCREMENT,
+                         name VARCHAR(255),
+                         phone VARCHAR(50),
+                         country VARCHAR(100),
+                         city VARCHAR(100),
+                         state VARCHAR(100)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS product_suppliers (
+                                 id INT PRIMARY KEY AUTO_INCREMENT,
+                                 products_id INT,
+                                 suppliers_id INT,
+                                 quantity INT,
+                                 cost_per_unit DECIMAL(10,2),
+                                 supply_date DATETIME,
+                                 FOREIGN KEY (products_id) REFERENCES products(id),
+                                 FOREIGN KEY (suppliers_id) REFERENCES suppliers(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS orders (
+                      id INT PRIMARY KEY AUTO_INCREMENT,
+                      sale_date DATETIME,
+                      users_id INT NOT NULL,
+                      FOREIGN KEY (users_id) REFERENCES users(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS order_items (
+                           id INT PRIMARY KEY AUTO_INCREMENT,
+                           orders_id INT NOT NULL,
+                           products_id INT NOT NULL,
+                           quantity INT,
+                           sale_price DECIMAL(10,2),
+                           FOREIGN KEY (orders_id) REFERENCES orders(id),
+                           FOREIGN KEY (products_id) REFERENCES products(id)
+) ENGINE=InnoDB;

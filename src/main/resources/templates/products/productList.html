@@ -18,6 +18,20 @@
     <th th:text="#{quantity}">Quantity</th>
     <th th:text="#{price}">Price</th>
     <th th:text="#{ProductCategory}">Category</th>
+
+<!--  <tr th:each="product : ${listProducts}">-->
+<!--    <td th:text="${product.name}"></td>-->
+<!--    <td th:text="${product.domain}"></td>-->
+<!--    <td th:text="${product.quantity}"></td>-->
+<!--    <td th:text="${product.price}"></td>-->
+<!--    <td>-->
+<!--      <a th:href="@{/products/{id}(id=${product.id})}"-->
+<!--         class="btn btn-sm btn-success">-->
+<!--        View-->
+<!--      </a>-->
+<!--    </td>-->
+<!--  </tr>-->
+
   </tr>
   </thead>
   <tbody>
@@ -28,7 +42,7 @@
     <td th:text="${product.domain}" />
     <td th:text="${product.quantity}" />
     <td th:text="${product.price}" />
-    <td th:text = "${product.getCategory().getName()}"/>
+    <td th:text = "${product.productCategory}"/>
 
 
   </tbody>

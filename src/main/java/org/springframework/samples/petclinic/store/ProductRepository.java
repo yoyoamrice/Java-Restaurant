@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
-import org.springframework.samples.petclinic.school.School;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -19,7 +18,7 @@ public interface ProductRepository extends Repository<Product, Long> {
 	void save(Product product);
 
 	@Transactional(readOnly = true)
-	Optional<Product> findById(Integer id);
+	Optional<Product> findById(Long id);
 
 	@Transactional(readOnly = true)
 	@Query("SELECT s FROM Product s WHERE s.domain = :domain")

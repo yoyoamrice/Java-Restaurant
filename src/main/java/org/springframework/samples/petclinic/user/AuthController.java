@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.user;
 
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,12 +9,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.samples.petclinic.school.School;
 import org.springframework.samples.petclinic.school.SchoolRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.samples.petclinic.validation.OnRegister;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -36,9 +42,10 @@ public class AuthController {
 	}
 
 	@PostMapping("/register-student")
-	public String processRegisterForm(@Valid User user,
+	public String processRegisterForm(@Validated(OnRegister.class) @ModelAttribute("user") User user,
 									  BindingResult result,
-									  RedirectAttributes redirectAttributes) {
+									  RedirectAttributes redirectAttributes,
+									  HttpServletRequest request) {
 		if (result.hasErrors()) {
 			return "auth/registerForm";
 		}
@@ -50,7 +57,7 @@ public class AuthController {
 			userService.registerNewStudent(user);
 		} catch (RuntimeException ex) {
 			// Handle duplicate email or other service errors
-			result.rejectValue("email", "duplicate", "This email is already registered");
+			result.rejectValue("email", "duplicateEmail", "This email is already registered");
 			return "auth/registerForm";
 		}
 
@@ -60,6 +67,11 @@ public class AuthController {
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getEmail(), rawPassword);
 			Authentication authentication = authenticationManager.authenticate(authToken);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
+			HttpSession session = request.getSession(true);
+			session.setAttribute(
+				HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+				SecurityContextHolder.getContext()
+			);
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("messageDanger", "Account created, but auto-login failed.");
 			return "redirect:/login";
@@ -101,22 +113,34 @@ public class AuthController {
 		return Optional.empty();
 	}
 
-//	@PostMapping("/login")
-//	public ResponseEntity<String> authenticateUser(@RequestBody LoginRequest loginRequest) {
-	// 1. Create a token with the user's plain text credentials
-//		Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
-//			loginRequest.getEmail(),
-//			loginRequest.getPassword()
-//		);
+	@GetMapping("/login-success")
+	public String processLoginSuccess(Principal principal, RedirectAttributes redirectAttributes) {
+		String email = principal.getName();
+		Optional<School> school = findSchoolByRecursiveDomain(email);
 
-	// 2. Process authentication using the manager (which uses your UserDetailsService)
-//		Authentication authentication = authenticationManager.authenticate(authenticationToken);
+		if(school.isPresent()) {
+			redirectAttributes.addFlashAttribute("messageSuccess",
+				"Welcome back! You have been redirected to " + school.get().getName() + "'s school page.");
+			return "redirect:/schools/" + school.get().getDomain().substring(0, school.get().getDomain().length() - 4);
+		} else {
+			redirectAttributes.addFlashAttribute("messageWarning",
+				"Welcome back! We could not find a school matching your email domain");
+			// Redirect a user to the schools page if their school was not found.
+			return "redirect:/schools";
+		}
+	}
 
-	// 3. Optional: Set the authenticated user in the security context (needed for session-based security)
-	// Since your app is stateless, you would typically generate a JWT token here.
-	// For testing, we'll confirm success.
+	@GetMapping("/login")
+	public String initLoginForm(Model model, HttpSession session) {
+		User user = new User();
 
-	// If the line above didn't throw an exception, authentication succeeded.
-//		return new ResponseEntity<>("User logged in successfully!", HttpStatus.OK);
-//	}
+		String lastEmail = (String)session.getAttribute("LAST_EMAIL");
+		if(lastEmail != null) {
+			user.setEmail(lastEmail);
+			session.removeAttribute("LAST_EMAIL");
+		}
+		model.addAttribute("user", user);
+		return "auth/loginForm";
+	}
+
 }

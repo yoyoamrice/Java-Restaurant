@@ -1,7 +1,6 @@
 package org.springframework.samples.petclinic.products;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -10,8 +9,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.samples.petclinic.store.Product;
-import org.springframework.samples.petclinic.school.SchoolController;
-import org.springframework.samples.petclinic.school.SchoolRepository;
 import org.springframework.samples.petclinic.store.ProductController;
 import org.springframework.samples.petclinic.store.ProductRepository;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
