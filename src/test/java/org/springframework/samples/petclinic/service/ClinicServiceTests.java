@@ -187,7 +187,7 @@ class ClinicServiceTests {
 		assertThat(optionalOwner).isPresent();
 		Owner owner6 = optionalOwner.get();
 
-		Pet pet7 = owner6.getPet(7);
+		Pet pet7 = owner6.getPet(7L);
 		String oldName = pet7.getName();
 
 		String newName = oldName + "X";
@@ -197,7 +197,7 @@ class ClinicServiceTests {
 		optionalOwner = this.owners.findById(6);
 		assertThat(optionalOwner).isPresent();
 		owner6 = optionalOwner.get();
-		pet7 = owner6.getPet(7);
+		pet7 = owner6.getPet(7L);
 		assertThat(pet7.getName()).isEqualTo(newName);
 	}
 
@@ -219,7 +219,7 @@ class ClinicServiceTests {
 		assertThat(optionalOwner).isPresent();
 		Owner owner6 = optionalOwner.get();
 
-		Pet pet7 = owner6.getPet(7);
+		Pet pet7 = owner6.getPet(7L);
 		int found = pet7.getVisits().size();
 		Visit visit = new Visit();
 		visit.setDescription("test");
@@ -238,7 +238,7 @@ class ClinicServiceTests {
 		assertThat(optionalOwner).isPresent();
 		Owner owner6 = optionalOwner.get();
 
-		Pet pet7 = owner6.getPet(7);
+		Pet pet7 = owner6.getPet(7L);
 		Collection<Visit> visits = pet7.getVisits();
 
 		assertThat(visits) //

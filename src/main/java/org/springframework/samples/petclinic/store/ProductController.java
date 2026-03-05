@@ -9,16 +9,19 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
 public class ProductController {
 private final ProductRepository productRepository;
 
-    public ProductController(ProductRepository productRepository) {
+	private final CategoryRepository categoryRepository;
 
+	public ProductController(ProductRepository productRepository, CategoryRepository categoryRepository) {
 		this.productRepository = productRepository;
-    }
+		this.categoryRepository = categoryRepository;
+	}
 	@GetMapping("/products")
 	public String showProductList(
 		@RequestParam(defaultValue = "1") int page, Model model) {
@@ -35,11 +38,14 @@ private final ProductRepository productRepository;
 
 	}
 	@GetMapping("/products/new")
-	public String initCreationForm(Map<String, Product> model) {
+	public String initCreationForm(Model model) {
 		// Instaniate a default object
 		Product product = new Product();
 		// Add school to input model so Thymeleaf can bind data to it
-		model.put("product", product);
+		model.addAttribute("product", product);
+		// Fetch all categories from the repository and add to the model
+		List<ProductCategory> categories = categoryRepository.findAll().stream().toList();
+		model.addAttribute("categories", categories);
 		return "products/createOrUpdateProductForm";
 	}
 

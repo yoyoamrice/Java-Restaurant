@@ -70,7 +70,7 @@ class OwnerControllerTests {
 
 	private Owner george() {
 		Owner george = new Owner();
-		george.setId(TEST_OWNER_ID);
+		george.setId((long) TEST_OWNER_ID);
 		george.setFirstName("George");
 		george.setLastName("Franklin");
 		george.setAddress("110 W. Liberty St.");
@@ -83,7 +83,7 @@ class OwnerControllerTests {
 		max.setName("Max");
 		max.setBirthDate(LocalDate.now());
 		george.addPet(max);
-		max.setId(1);
+		max.setId(1L);
 		return george;
 	}
 
@@ -233,7 +233,7 @@ class OwnerControllerTests {
 		int pathOwnerId = 1;
 
 		Owner owner = new Owner();
-		owner.setId(2);
+		owner.setId(2L);
 		owner.setFirstName("John");
 		owner.setLastName("Doe");
 		owner.setAddress("Center Street");

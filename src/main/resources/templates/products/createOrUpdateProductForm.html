@@ -1,5 +1,5 @@
 <html xmlns:th="https://www.thymeleaf.org"
-      th:replace="~{fragments/layout :: layout (~{::body},'products')}">
+      th:replace="~{fragments/layout :: layout (~{::body},'product')}">
 
 <body>
 
@@ -13,7 +13,17 @@
   <input th:replace="~{fragments/inputField :: input (#{price}, 'price', 'text')}" />
   <input th:replace="~{fragments/inputField :: input (#{quantity}, 'quantity', 'text')}" />
 
-
+  <div class="form-group">
+    <label class="col-sm-2 control-label" th:text="#{label.product.category}">Category</label>
+    <div class="col-sm-10">
+      <select th:field="*{productCategory}" class="form-control">
+        <option value="">-- Select a Category --</option>
+        <option th:each="cat : ${categories}"
+                th:value="${cat.id}"
+                th:text="${cat.name}">Category Name</option>
+      </select>
+    </div>
+  </div>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <button class="btn btn-primary" type="submit" th:text="#{addProduct}">Add Product</button>

@@ -15,7 +15,6 @@ import java.util.List;
 @Setter
 
 public class ProductCategory extends NamedEntity {
-	@OneToMany(mappedBy = "productCategory")
-	private List<Product> products = new ArrayList<>();
+
 }
 

@@ -14,6 +14,7 @@ import org.springframework.samples.petclinic.store.ProductRepository;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -34,6 +35,8 @@ class ProductControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
+
+
 	@MockitoBean
 	private ProductRepository productRepository;
 
@@ -47,7 +50,7 @@ class ProductControllerTest {
 		product.setName("Chair From China");
 		product.setDomain("china.com");
 		product.setQuantity(1);
-		product.setPrice(1);
+		product.setPrice(BigDecimal.valueOf(1.0));
 	}
 
 	@Test

@@ -41,7 +41,7 @@ class SchoolControllerTest {
 	void setup() {
 		// Create a dummy school to be returned by the mocked repository
 		school = new School();
-		school.setId(TEST_SCHOOL_ID);
+		school.setId((long) TEST_SCHOOL_ID);
 		school.setName("Kirkwood Community College");
 		school.setDomain("kirkwood.edu");
 		school.setStatus(School.SchoolStatus.ACTIVE);

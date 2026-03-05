@@ -1,12 +1,12 @@
 package org.springframework.samples.petclinic.store;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.samples.petclinic.model.NamedEntity;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products")
@@ -16,14 +16,18 @@ public class Product extends NamedEntity{
 	@Column
 	@NotEmpty
 	private String domain;
-	@Column
+	@Column(nullable = true)
 	@NotNull
-	@Min(value=0, message="quantity must be 0>")
+
+	@Positive( message = "Must be a positive integer")
 	private int quantity;
-	@Column
 	@NotNull
-	@Min(value=0, message="price must be 0>")
-	private double price;
+
+	@Positive(message="must be positive decimal")
+	@Digits(integer = 6, fraction = 2, message="must be positive decimal")
+	@Column(precision = 8, scale = 2)
+	private BigDecimal price;
+
 	@ManyToOne
 	@JoinColumn(name = "product_category_id")
 	private ProductCategory productCategory;
