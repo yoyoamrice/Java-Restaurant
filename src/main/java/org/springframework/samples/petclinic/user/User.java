@@ -48,8 +48,6 @@ public class User extends BaseEntity {
 	@Column(name = "public_phone")
 	private Boolean publicPhone;
 
-	@Column(name = "preferred_language", length = 50)
-	private String preferredLanguage;
 
 	@Column(name="password_hash", nullable = true, length = 255)
 	@NotEmpty(message = "Password is required", groups = OnRegister.class)

@@ -56,7 +56,7 @@ private final ProductRepository productRepository;
 			.orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + id));
 
 		model.addAttribute("product", product);
-		return "products/objectDetails";
+		return "products/productDetails";
 	}
 	@PostMapping("/products/new")
 	public String processCreationForm(@Valid Product product, BindingResult result) {

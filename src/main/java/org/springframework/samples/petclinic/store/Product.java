@@ -14,21 +14,21 @@ import java.math.BigDecimal;
 @Setter
 public class Product extends NamedEntity{
 	@Column
-	@NotEmpty
+	@NotEmpty(message="Domain is required")
 	private String domain;
 	@Column(nullable = true)
-	@NotNull
+	@NotNull(message="Quantity is required")
 
 	@Positive( message = "Must be a positive integer")
-	private int quantity;
-	@NotNull
+	private Integer quantity;
+	@NotNull(message="Price is required")
 
 	@Positive(message="must be positive decimal")
 	@Digits(integer = 6, fraction = 2, message="must be positive decimal")
 	@Column(precision = 8, scale = 2)
 	private BigDecimal price;
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "product_category_id")
 	private ProductCategory productCategory;
 

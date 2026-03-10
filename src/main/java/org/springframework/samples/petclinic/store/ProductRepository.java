@@ -23,9 +23,7 @@ public interface ProductRepository extends Repository<Product, Long> {
 	@Transactional(readOnly = true)
 	@Query("SELECT s FROM Product s WHERE s.domain = :domain")
 	Optional<Product> findByDomain(String domain);
-	@Transactional(readOnly = true)
-	@Query("SELECT s FROM Product s WHERE s.productCategory = :productCategory")
-	Optional<Product> findByCategory(ProductCategory category);
+
 }
 
 
