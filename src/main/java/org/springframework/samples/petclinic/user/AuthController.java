@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.user;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,13 +36,13 @@ public class AuthController {
 		this.authenticationManager = authenticationManager;
 	}
 
-	@GetMapping("/register-student")
+	@GetMapping("/register")
 	public String initRegisterForm(Model model) {
 		model.addAttribute("user", new User());
 		return "auth/registerForm";
 	}
 
-	@PostMapping("/register-student")
+	@PostMapping("/register")
 	public String processRegisterForm(@Validated(OnRegister.class) @ModelAttribute("user") User user,
 									  BindingResult result,
 									  RedirectAttributes redirectAttributes,

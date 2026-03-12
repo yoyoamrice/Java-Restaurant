@@ -49,6 +49,7 @@ public class User extends BaseEntity {
 	private Boolean publicPhone;
 
 
+
 	@Column(name="password_hash", nullable = true, length = 255)
 	@NotEmpty(message = "Password is required", groups = OnRegister.class)
 	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$",

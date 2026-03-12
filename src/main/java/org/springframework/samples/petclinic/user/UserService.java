@@ -7,6 +7,4 @@ public interface UserService {
 	 * @return The saved User object
 	 */
 	User registerNewStudent(User user);
-
-    Object registerNewUser(User any);
 }

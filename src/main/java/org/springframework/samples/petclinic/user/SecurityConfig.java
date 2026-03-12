@@ -34,11 +34,16 @@ public class SecurityConfig {
 				// This allows unmapped paths to result in 404, and allows all web viewing.
 				.requestMatchers(HttpMethod.GET).permitAll()
 
+				// Require login for the profile and any other user settings
+				.requestMatchers("/users/profile", "/users/delete").authenticated()
+
 				// Allows guest users to make POST requests
 				.requestMatchers("/register-student",
+					"/register",
 					"/login",
 					"/schools/new",
 					"/owners/new",
+					"/products",
 					"/products/new"
 				).permitAll()
 

@@ -23,16 +23,11 @@ public class UserServiceImpl implements UserService {
 		// Hash the user's password
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		// Default the user's default role
-		Role studentRole = roleRepository.findByName("STUDENT").orElseThrow(() -> new RuntimeException("Student Role Not Found"));
+		Role studentRole = roleRepository.findByName("USER").orElseThrow(() -> new RuntimeException("User Role Not Found"));
 		Set<Role> roles = new HashSet<>();
 		roles.add(studentRole);
 		user.setRoles(roles);
 		// Save the user's data
 		return userRepository.save(user);
-	}
-
-	@Override
-	public Object registerNewUser(User any) {
-		return null;
 	}
 }
