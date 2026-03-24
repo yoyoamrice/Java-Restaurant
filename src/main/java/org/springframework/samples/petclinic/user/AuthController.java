@@ -90,7 +90,7 @@ public class AuthController {
 			redirectAttributes.addFlashAttribute("messageWarning",
 				"Your user account has been created, but we could not find a school matching your email domain");
 			// Redirect a user to the schools page if their school was not found.
-			return "redirect:/schools";
+			return "redirect:/";
 		}
 	}
 
@@ -119,16 +119,17 @@ public class AuthController {
 		String email = principal.getName();
 		Optional<School> school = findSchoolByRecursiveDomain(email);
 
-		if(school.isPresent()) {
-			redirectAttributes.addFlashAttribute("messageSuccess",
-				"Welcome back! You have been redirected to " + school.get().getName() + "'s school page.");
-			return "redirect:/schools/" + school.get().getDomain().substring(0, school.get().getDomain().length() - 4);
+		if (school.isPresent()) {
+//			redirectAttributes.addFlashAttribute("messageSuccess",
+//				"Welcome back! You have been redirected to " + school.get().getName() + "'s school page.");
+//			return "redirect:/products/" + school.get().getDomain().substring(0, school.get().getDomain().length() - 4);
 		} else {
 			redirectAttributes.addFlashAttribute("messageWarning",
-				"Welcome back! We could not find a school matching your email domain");
+				"Welcome back! ");
 			// Redirect a user to the schools page if their school was not found.
-			return "redirect:/schools";
+			return "redirect:/products";
 		}
+		return "products/productList";
 	}
 
 	@GetMapping("/login")
@@ -140,7 +141,7 @@ public class AuthController {
 			user.setEmail(lastEmail);
 			session.removeAttribute("LAST_EMAIL");
 		}
-		model.addAttribute("user", user);
+		model.addAttribute("user", new User());
 		return "auth/loginForm";
 	}
 

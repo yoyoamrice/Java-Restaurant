@@ -34,10 +34,10 @@ public class User extends BaseEntity {
 
 	@Column(nullable = false, unique = true, length = 255)
 	@NotEmpty(message = "Email is required")
-	@Email(message = "Please enter a valid email")
+	@Email(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Invalid email format")
 	private String email;
-
 	@Column(name = "public_email")
+
 	private Boolean publicEmail;
 
 	@Column(name = "phone", length = 255)
@@ -78,4 +78,7 @@ public class User extends BaseEntity {
 	)
 	@EqualsAndHashCode.Exclude
 	private Set<Role> roles;
+	@Column(name = "preferred_language")
+	private String preferredLanguage;
+
 }

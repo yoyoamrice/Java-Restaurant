@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,6 +19,7 @@ class UserServiceImplTest {
 
 	@Mock
 	private UserRepository userRepository;
+
 	@Mock
 	private RoleRepository roleRepository;
 	@Mock
@@ -32,11 +34,12 @@ class UserServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		testUser = new User();
-		testUser.setEmail("test@kirkwood.edu");
+		testUser.setEmail("test@student.edu");
 		testUser.setPassword("rawPassword");
+		testUser.setRoles(new HashSet<>());
 
 		studentRole = new Role();
-		studentRole.setName("STUDENT");
+		studentRole.setName("USER");
 	}
 
 	@Test
@@ -45,8 +48,8 @@ class UserServiceImplTest {
 		// Simulate password hashing: encoder.encode() should return the hashed string
 		when(passwordEncoder.encode(testUser.getPassword())).thenReturn("hashedPassword");
 
-		// Simulate role lookup: roleRepository.findByName() should return the STUDENT role
-		when(roleRepository.findByName("STUDENT")).thenReturn(Optional.of(studentRole));
+		// Simulate role lookup: roleRepository.findByName() should return the USER role
+		when(roleRepository.findByName("USER")).thenReturn(Optional.of(studentRole));
 
 		// Simulate save: userRepository.save() should return the user object that was passed to it
 		when(userRepository.save(any(User.class))).thenReturn(testUser);
@@ -62,14 +65,14 @@ class UserServiceImplTest {
 		assertEquals("hashedPassword", registeredUser.getPassword(), "Password must be hashed.");
 
 		// Check that the STUDENT role was assigned
-		assertTrue(registeredUser.getRoles().contains(studentRole), "User must have the STUDENT role.");
+		assertTrue(registeredUser.getRoles().contains(studentRole), "User must have the USER role.");
 
 		// --- 4. Verify Mock Interactions (Check the service called its dependencies correctly) ---
 		// Verify that the encoder was called once
 		verify(passwordEncoder, times(1)).encode("rawPassword");
 
 		// Verify that the role repository was called once
-		verify(roleRepository, times(1)).findByName("STUDENT");
+		verify(roleRepository, times(1)).findByName("USER");
 
 		// Verify that the user was saved once
 		verify(userRepository, times(1)).save(testUser);

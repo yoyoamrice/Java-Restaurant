@@ -7,6 +7,9 @@
 
   <h2 class="mb-4">Edit Profile</h2>
 
+
+</div>
+
   <div class="card mb-4">
     <div class="card-body bg-success-subtle">
       <form th:action="@{/users/profile}" th:object="${user}" method="post">
@@ -62,7 +65,17 @@
     </div>
   </div>
 
-  <!-- Delete Account block will go here -->
+
+  <div class="card border-danger mb-5">
+    <div class="card-body text-danger">
+      <h5 class="card-title">Danger Zone</h5>
+      <p class="card-text">Once you delete your account, there is no going back. Please be certain.</p>
+
+      <form th:action="@{/users/delete}" method="post" onsubmit="return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.');">
+        <button type="submit" class="btn btn-outline-danger">Delete Account</button>
+      </form>
+    </div>
+  </div>
 
 </div>
 
