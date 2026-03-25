@@ -42,4 +42,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/petclinic:v${{ github.run_number }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/restaurant:v${{ github.run_number }}
