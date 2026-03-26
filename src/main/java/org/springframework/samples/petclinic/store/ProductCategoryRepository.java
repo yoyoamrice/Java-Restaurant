@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.Optional;
 
-public interface CategoryRepository  extends Repository<ProductCategory, Long> {
+public interface ProductCategoryRepository extends Repository<ProductCategory, Long> {
 	@Transactional(readOnly = true)
 	Collection<ProductCategory> findAll();
 

@@ -10,15 +10,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class ProductController {
 private final ProductRepository productRepository;
 
-	private final CategoryRepository categoryRepository;
+	private final ProductCategoryRepository categoryRepository;
 
-	public ProductController(ProductRepository productRepository, CategoryRepository categoryRepository) {
+	public ProductController(ProductRepository productRepository, ProductCategoryRepository categoryRepository) {
 		this.productRepository = productRepository;
 		this.categoryRepository = categoryRepository;
 	}

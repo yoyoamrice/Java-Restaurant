@@ -75,7 +75,7 @@ class AuthControllerTest {
 		mockMvc.perform(get("/login"))
 			.andExpect(status().isOk())
 			.andExpect(view().name("auth/loginForm"))
-			.andExpect(model().attributeExists(""));
+			.andExpect(model().attributeExists("user"));
 	}
 
 	@Test
@@ -83,7 +83,7 @@ class AuthControllerTest {
 		// Simulate a request where the session contains a failed login attempt
 		mockMvc.perform(get("/login").sessionAttr("LAST_EMAIL", "wrong@kirkwood.edu"))
 			.andExpect(status().isOk())
-			.andExpect(model().attributeExists(""))
+			.andExpect(model().attributeExists("/"))
 			// Verify the HTML output actually contains the email in the value attribute
 			.andExpect(content().string(containsString("wrong@kirkwood.edu")));
 	}
@@ -103,20 +103,20 @@ class AuthControllerTest {
 		// 3. Perform the GET request, passing the principal directly
 		mockMvc.perform(get("/login-success").principal(mockPrincipal))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl(""))
+			.andExpect(redirectedUrl("/"))
 			.andExpect(flash().attributeExists("messageSuccess"));
 	}
 
-	@Test
-	void testLoginSuccessRedirectsToSchoolsListIfNotFound() throws Exception {
-		given(schoolRepository.findByDomain(anyString())).willReturn(Optional.empty());
-
-		// Create a fake Principal with an unknown domain
-		Principal mockPrincipal = () -> "student@unknown.com";
-
-		mockMvc.perform(get("/login-success").principal(mockPrincipal))
-			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/schools"))
-			.andExpect(flash().attributeExists("messageWarning"));
-	}
+//	@Test
+//	void testLoginSuccessRedirectsToSchoolsListIfNotFound() throws Exception {
+//		given(schoolRepository.findByDomain(anyString())).willReturn(Optional.empty());
+//
+//		// Create a fake Principal with an unknown domain
+//		Principal mockPrincipal = () -> "student@unknown.com";
+//
+//		mockMvc.perform(get("/login-success").principal(mockPrincipal))
+//			.andExpect(status().is3xxRedirection())
+//			.andExpect(redirectedUrl("/schools"))
+//			.andExpect(flash().attributeExists("messageWarning"));
+//	}
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ public interface ProductRepository extends Repository<Product, Long> {
 	Collection<Product> findAll();
 
 	@Transactional(readOnly = true)
-	Page<Product> findAll(Pageable pageable);
+	Page<Product> findAll(Pageable any);
 	void save(Product product);
 
 	@Transactional(readOnly = true)
@@ -23,6 +24,9 @@ public interface ProductRepository extends Repository<Product, Long> {
 	@Transactional(readOnly = true)
 	@Query("SELECT s FROM Product s WHERE s.domain = :domain")
 	Optional<Product> findByDomain(String domain);
+
+
+
 
 }
 
