@@ -10,10 +10,6 @@
   <artifactId>spring-petclinic</artifactId>
   <version>4.0.0-SNAPSHOT</version>
   <name>petclinic</name>
-  <groupId>org.springframework.samples</groupId>
-  <artifactId>spring-restaurant</artifactId>
-  <version>4.0.0-SNAPSHOT</version>
-  <name>restaurant</name>
 
   <properties>
     <!-- Generic properties -->
@@ -44,11 +40,8 @@
     </license>
   </licenses>
 
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-test</artifactId>
-    <scope>test</scope>
-  </dependency>
+  <dependencies>
+    <!-- Spring and Spring Boot dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
@@ -82,11 +75,7 @@
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
     </dependency>
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-test</artifactId>
-    <scope>test</scope>
-  </dependency>
+
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
@@ -163,12 +152,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-mysql</artifactId>
+      <scope>test</scope>
     </dependency>
-  </project>
+  </dependencies>
 
-  <plugins>
-
+  <build>
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -297,7 +288,7 @@
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
       </plugin>
-  </plugins>
+    </plugins>
   </build>
   <profiles>
     <profile>
@@ -350,6 +341,7 @@
         </plugins>
       </build>
     </profile>
+    <profile>
       <id>m2e</id>
       <activation>
         <property>
@@ -414,10 +406,6 @@
           </plugins>
         </pluginManagement>
       </build>
+    </profile>
   </profiles>
-    </build>
-
-
-
-
-
+</project>
