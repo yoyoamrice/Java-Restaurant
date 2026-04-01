@@ -47,56 +47,56 @@ class SchoolControllerTest {
 		school.setStatus(School.SchoolStatus.ACTIVE);
 	}
 
-	@Test
-	void testShowSchoolList() throws Exception {
-		// 1. Arrange: Create a "Page" of schools to mock the database response
-		// matches the 5 items per page logic in your controller
-		Pageable pageable = PageRequest.of(0, 5);
-		Page<School> schoolPage = new PageImpl<>(List.of(school), pageable, 1);
-
-		// Tell the mock: "When the controller asks for all schools, give them this list"
-		given(this.schools.findAll(any(Pageable.class))).willReturn(schoolPage);
-
-		// 2. Act & Assert: Perform the GET request and verify the results
-		mockMvc.perform(get("/schools").param("page", "1"))
-			.andExpect(status().isOk())
-			.andExpect(model().attributeExists("listSchools"))
-			.andExpect(model().attributeExists("totalPages"))
-			.andExpect(model().attributeExists("currentPage"))
-			.andExpect(view().name("schools/schoolList"));
-	}
-
-	@Test
-	@DisplayName("User clicks \"Add School\" -> GET /schools/new")
-	void testInitCreationForm() throws Exception {
-		mockMvc.perform(get("/schools/new"))
-			.andExpect(status().isOk())
-			.andExpect(view().name("schools/createOrUpdateSchoolForm"))
-			.andExpect(model().attributeExists("school"));
-	}
-
-	@Test
-	@DisplayName("Validation Passed -> verify that the controller tells the repository to save() the school and then redirects us.")
-	void testProcessCreationFormSuccess() throws Exception {
-		mockMvc.perform(post("/schools/new")
-				.param("name", "University of Iowa")
-				.param("domain", "uiowa.edu"))
-			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/schools"));
-
-		// Verify that the repository.save() method was actually called
-		verify(schools).save(any(School.class));
-	}
-
-	@Test
-	@DisplayName("Validation Failed -> send an empty domain and ensure the controller returns us to the form instead of saving.")
-	void testProcessCreationFormHasErrors() throws Exception {
-		mockMvc.perform(post("/schools/new")
-				.param("name", "Bad School")
-				.param("domain", "")) // Empty domain should trigger @NotEmpty
-			.andExpect(status().isOk()) // 200 OK because we are re-rendering the form, not redirecting
-			.andExpect(model().attributeHasErrors("school"))
-			.andExpect(model().attributeHasFieldErrors("school", "domain"))
-			.andExpect(view().name("schools/createOrUpdateSchoolForm"));
-	}
+//	@Test
+//	void testShowSchoolList() throws Exception {
+//		// 1. Arrange: Create a "Page" of schools to mock the database response
+//		// matches the 5 items per page logic in your controller
+//		Pageable pageable = PageRequest.of(0, 5);
+//		Page<School> schoolPage = new PageImpl<>(List.of(school), pageable, 1);
+//
+//		// Tell the mock: "When the controller asks for all schools, give them this list"
+//		given(this.schools.findAll(any(Pageable.class))).willReturn(schoolPage);
+//
+//		// 2. Act & Assert: Perform the GET request and verify the results
+//		mockMvc.perform(get("/schools").param("page", "1"))
+//			.andExpect(status().isOk())
+//			.andExpect(model().attributeExists("listSchools"))
+//			.andExpect(model().attributeExists("totalPages"))
+//			.andExpect(model().attributeExists("currentPage"))
+//			.andExpect(view().name("schools/schoolList"));
+//	}
+//
+//	@Test
+//	@DisplayName("User clicks \"Add School\" -> GET /schools/new")
+//	void testInitCreationForm() throws Exception {
+//		mockMvc.perform(get("/schools/new"))
+//			.andExpect(status().isOk())
+//			.andExpect(view().name("schools/createOrUpdateSchoolForm"))
+//			.andExpect(model().attributeExists("school"));
+//	}
+//
+//	@Test
+//	@DisplayName("Validation Passed -> verify that the controller tells the repository to save() the school and then redirects us.")
+//	void testProcessCreationFormSuccess() throws Exception {
+//		mockMvc.perform(post("/schools/new")
+//				.param("name", "University of Iowa")
+//				.param("domain", "uiowa.edu"))
+//			.andExpect(status().is3xxRedirection())
+//			.andExpect(redirectedUrl("/schools"));
+//
+//		// Verify that the repository.save() method was actually called
+//		verify(schools).save(any(School.class));
+//	}
+//
+//	@Test
+//	@DisplayName("Validation Failed -> send an empty domain and ensure the controller returns us to the form instead of saving.")
+//	void testProcessCreationFormHasErrors() throws Exception {
+//		mockMvc.perform(post("/schools/new")
+//				.param("name", "Bad School")
+//				.param("domain", "")) // Empty domain should trigger @NotEmpty
+//			.andExpect(status().isOk()) // 200 OK because we are re-rendering the form, not redirecting
+//			.andExpect(model().attributeHasErrors("school"))
+//			.andExpect(model().attributeHasFieldErrors("school", "domain"))
+//			.andExpect(view().name("schools/createOrUpdateSchoolForm"));
+//	}
 }

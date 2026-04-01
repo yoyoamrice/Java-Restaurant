@@ -210,6 +210,23 @@ CREATE TABLE IF NOT EXISTS subscriptions
   UNIQUE KEY uk_subscription_name (name)
 );
 
+create table if not exists recipes
+(
+  id bigint unsigned auto_increment primary key,
+  recipe_ingredients varchar(255) null,
+  instructions       varchar(255) not null,
+  type               varchar(50)  null,
+  category           varchar(50)  null,
+  dietary_preference varchar(50)  null,
+  internal_notes     varchar(255) not null,
+  constraint id unique (id),
+  constraint internal_notes unique (internal_notes)
+);
+
+
+
+
+
 
 
 

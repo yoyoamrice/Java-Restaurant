@@ -228,3 +228,16 @@ INSERT IGNORE INTO subscriptions (name, description, monthly_price, annual_price
 ('Free', 'Get started with 10 free leagues for your college or university.', 0, 0),
 ('Pro', 'Create up to 25 leagues for your college or university.', 25, 250);
 
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE recipes;
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+INSERT INTO recipes (recipe_ingredients, instructions, type, category, dietary_preference, internal_notes)
+VALUES
+  ('Chickpeas, Tahini, Lemon', 'Blend until smooth.', 'Appetizer', 'Mediterranean', 'Vegan', 'Classic hummus'),
+  ('Pasta, Tomato, Basil', 'Boil pasta, add sauce.', 'Main Course', 'Italian', 'Vegetarian', 'Simple Pomodoro'),
+  ('Beef, Tortilla, Salsa', 'Cook beef, assemble taco.', 'Main Course', 'Mexican', 'Meat-based', 'Street style'),
+  ('Lentils, Carrots, Curry Powder', 'Simmer until soft.', 'Soup', 'Indian', 'Vegan', 'Healthy Dal'),
+  ('Zucchini, Garlic, Olive Oil', 'Sauté zucchini noodles.', 'Main Course', 'Italian', 'Vegan', 'Low carb option');
+

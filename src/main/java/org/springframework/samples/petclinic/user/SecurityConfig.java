@@ -38,13 +38,16 @@ public class SecurityConfig {
 				.requestMatchers("/users/profile", "/users/delete").authenticated()
 
 				// Allows guest users to make POST requests
-				.requestMatchers("/register-student",
+				.requestMatchers(
+					"/register-student",
+					"/images/**",
 					"/register",
 					"/login",
 					"/schools/new",
 					"/owners/new",
 					"/products",
-					"/products/new"
+					"/products/new",
+					"/recipes/**"
 				).permitAll()
 
 				// PROTECTED CATCH-ALL (This protects unlisted POST/PUT/DELETE, etc.)
