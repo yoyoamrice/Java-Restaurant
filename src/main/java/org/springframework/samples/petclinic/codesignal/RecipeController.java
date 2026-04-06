@@ -67,4 +67,30 @@ public class RecipeController {
 		Recipe savedRecipe = recipeRepository.save(recipe);
 		return ResponseEntity.status(HttpStatus.CREATED).body(savedRecipe);
 	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<Recipe> updateRecipe(
+		@PathVariable Long id,
+		@RequestBody Recipe updatedRecipe
+	) {
+		return recipeRepository.findById(id).map(existingRecipe -> {
+			existingRecipe.setIngredients(updatedRecipe.getIngredients());
+			existingRecipe.setInstructions(updatedRecipe.getInstructions());
+			existingRecipe.setType(updatedRecipe.getType());
+			existingRecipe.setCategory(updatedRecipe.getCategory());
+			existingRecipe.setDietaryPreference(updatedRecipe.getDietaryPreference());
+			existingRecipe.setInternalNotes(updatedRecipe.getInternalNotes());
+			recipeRepository.save(existingRecipe);
+			return ResponseEntity.ok(existingRecipe); // 200
+		}).orElseGet(() -> ResponseEntity.notFound().build()); // 404
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteRecipe(@PathVariable Long id) {
+		if (!recipeRepository.existsById(id)) {
+			return ResponseEntity.notFound().build(); // 404
+		}
+		recipeRepository.deleteById(id);
+		return ResponseEntity.noContent().build(); // 204
+	}
 }

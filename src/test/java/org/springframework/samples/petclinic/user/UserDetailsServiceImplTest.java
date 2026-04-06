@@ -32,6 +32,11 @@ class UserDetailsServiceImplTest {
 		testUser.setPassword("hashedPassword");
 		Role studentRole = new Role();
 		studentRole.setName("STUDENT");
+		Permission viewLeaguesPermission = new Permission();
+		viewLeaguesPermission.setName("VIEW_LEAGUES");
+		studentRole.setPermissions(Set.of(viewLeaguesPermission));
+
+
 		testUser.setRoles(Set.of(studentRole));
 	}
 
@@ -47,6 +52,8 @@ class UserDetailsServiceImplTest {
 		// Assert
 		assertNotNull(userDetails);
 		assertEquals(testUser.getEmail(), userDetails.getUsername());
+		assertTrue(userDetails.getAuthorities().stream()
+			.anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT")));
 		assertEquals(testUser.getPassword(), userDetails.getPassword());
 		// Check that the roles were loaded correctly
 		assertTrue(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT")));

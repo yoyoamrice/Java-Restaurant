@@ -39,16 +39,25 @@ public class SecurityConfig {
 
 				// Allows guest users to make POST requests
 				.requestMatchers(
+					"/",
 					"/register-student",
-					"/images/**",
-					"/register",
-					"/login",
-					"/schools/new",
-					"/owners/new",
+					"/resources/**",
+					"/recipes/**",
+					"/recipes/new",
+					"/pets/**",
+					"/vets/**",
+					"/vets.html",
 					"/products",
-					"/products/new",
-					"/recipes/**"
+					"/products/new"
+
 				).permitAll()
+				// Only SUPER_ADMIN users can add new schools
+				.requestMatchers("/schools/new").hasAuthority("MANAGE_ALL_SCHOOLS")
+				// All users can access the list of schools and individual schools
+				.requestMatchers(HttpMethod.GET, "/schools", "/schools/{slug:[a-zA-Z-]+}").permitAll()
+
+				// Require login for the profile and any other user settings
+				.requestMatchers("/users/profile", "/users/delete").authenticated()
 
 				// PROTECTED CATCH-ALL (This protects unlisted POST/PUT/DELETE, etc.)
 				.anyRequest().authenticated()

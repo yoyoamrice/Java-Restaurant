@@ -2,6 +2,8 @@ package org.springframework.samples.petclinic.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.samples.petclinic.model.BaseEntity;
+
 import java.util.Set;
 
 @Entity
@@ -25,5 +27,15 @@ public class Role {
 	@EqualsAndHashCode.Exclude
 	private Set<User> users;
 
-	// We will add the relationship to Permissions later.
-}
+		@ManyToMany(fetch = FetchType.EAGER)
+		@JoinTable(
+			name = "permission_role", // Your exact DB junction table name
+			joinColumns = @JoinColumn(name = "role_id"),
+			inverseJoinColumns = @JoinColumn(name = "permission_id")
+		)
+		@EqualsAndHashCode.Exclude
+		private Set<Permission> permissions;
+
+	}
+
+

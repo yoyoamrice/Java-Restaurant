@@ -1,30 +1,52 @@
 package org.springframework.samples.petclinic.user;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+
 	private final UserRepository userRepository;
 
 	public UserDetailsServiceImpl(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 
-
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		// 1. Find the user via the UserRepository
-		User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("No user found with email '" + email + "'.")); // TODO: Make the message generic
-		// 2. Convert your custom User model into the UserDetails object that Spring Security understands
+
+		User user = userRepository.findByEmail(email)
+			.orElseThrow(() -> new UsernameNotFoundException("Invalid email or password."));
+
+		if (user.getDeletedAt() != null) {
+			throw new UsernameNotFoundException("Invalid email or password.");
+		}
+
+		// NEW AUTHORITIES LOGIC
+		List<GrantedAuthority> authorities = new ArrayList<>();
+
+		for (Role role : user.getRoles()) {
+			// 1. Add the role (Spring Security requires the "ROLE_" prefix for roles)
+			authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+
+			// 2. Add all permissions attached to this role
+			for (Permission permission : role.getPermissions()) {
+				authorities.add(new SimpleGrantedAuthority(permission.getName()));
+			}
+		}
+
+		// UPDATED BUILDER
 		return org.springframework.security.core.userdetails.User.builder()
 			.username(user.getEmail())
-			.password(user.getPassword()) // Spring Security will compare this HASH with the login password
-			.roles(user.getRoles().stream()
-				.map(role -> role.getName())
-				.toArray(String[]::new)) // Converts your Role set into Spring's required format
+			.password(user.getPassword())
+			.authorities(authorities) // Replaced .roles() with .authorities()
 			.build();
 	}
 }
