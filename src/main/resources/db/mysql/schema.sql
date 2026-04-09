@@ -223,6 +223,17 @@ create table if not exists recipes
   constraint internal_notes unique (internal_notes)
 );
 
+CREATE TABLE if not exists product_recipes (
+                               id BIGINT unsigned auto_increment PRIMARY KEY,
+                               recipe_ingredients varchar(255) null,
+                               instructions varchar(255) null,
+                               type VARCHAR(255),
+                               category VARCHAR(255),
+                               dietary_preference VARCHAR(255),
+                               internal_notes varchar(255) null,
+                               constraint id unique (id),
+                               constraint internal_notes unique (internal_notes)
+);
 
 
 

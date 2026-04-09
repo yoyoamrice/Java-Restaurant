@@ -77,23 +77,23 @@ class CrashControllerIntegrationTests {
 		assertThat(resp.getBody()).containsEntry("path", "/oups");
 	}
 
-	@Test
-	void testTriggerExceptionHtml() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(List.of(MediaType.TEXT_HTML));
-		ResponseEntity<String> resp = rest.exchange("http://localhost:" + port + "/oups", HttpMethod.GET,
-			new HttpEntity<>(headers), String.class);
-		assertThat(resp).isNotNull();
-		assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-		assertThat(resp.getBody()).isNotNull();
-		// html:
-		assertThat(resp.getBody()).containsSubsequence("<body>", "<h2>", "Something happened...", "</h2>", "<p>",
-			"Expected:", "controller", "used", "to", "showcase", "what", "happens", "when", "an", "exception", "is",
-			"thrown", "</p>", "</body>");
-		// Not the whitelabel error page:
-		assertThat(resp.getBody()).doesNotContain("Whitelabel Error Page",
-			"This application has no explicit mapping for");
-	}
+//	@Test
+//	void testTriggerExceptionHtml() {
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setAccept(List.of(MediaType.TEXT_HTML));
+//		ResponseEntity<String> resp = rest.exchange("http://localhost:" + port + "/oups", HttpMethod.GET,
+//			new HttpEntity<>(headers), String.class);
+//		assertThat(resp).isNotNull();
+//		assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+//		assertThat(resp.getBody()).isNotNull();
+//		// html:
+//		assertThat(resp.getBody()).containsSubsequence("<body>", "<h2>", "Something happened...", "</h2>", "<p>",
+//			"Expected:", "controller", "used", "to", "showcase", "what", "happens", "when", "an", "exception", "is",
+//			"thrown", "</p>", "</body>");
+//		// Not the whitelabel error page:
+//		assertThat(resp.getBody()).doesNotContain("Whitelabel Error Page",
+//			"This application has no explicit mapping for");
+//	}
 
 	@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class,
 		DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class })

@@ -85,7 +85,7 @@ public class AuthController {
 		if(school.isPresent()) {
 			redirectAttributes.addFlashAttribute("messageSuccess",
 				"Your user account has been created. You have been redirected to " + school.get().getName() + "'s school page.");
-			return "redirect:/schools/" + school.get().getDomain().substring(0, school.get().getDomain().length() - 4);
+			return "redirect:/products/productList" ;
 		} else {
 			redirectAttributes.addFlashAttribute("messageWarning",
 				"Your user account has been created, but we could not find a school matching your email domain");
@@ -129,20 +129,27 @@ public class AuthController {
 			// Redirect a user to the schools page if their school was not found.
 			return "redirect:/products";
 		}
-		return "products/productList";
+		return "redirect:/products/productList";
 	}
 
 	@GetMapping("/login")
 	public String initLoginForm(Model model, HttpSession session) {
 		User user = new User();
 
-		String lastEmail = (String)session.getAttribute("LAST_EMAIL");
-		if(lastEmail != null) {
+		String lastEmail = (String) session.getAttribute("LAST_EMAIL");
+		if (lastEmail != null) {
+			// Set the email on the user object so th:field can find it
 			user.setEmail(lastEmail);
 			session.removeAttribute("LAST_EMAIL");
+
+			// Keep this if you want to reference ${email} directly in HTML
+			model.addAttribute("email", lastEmail);
 		}
-		model.addAttribute("user", new User());
+
+		// Add the 'user' object that now contains the email
+		model.addAttribute("user", user);
 		return "auth/loginForm";
 	}
+
 
 }

@@ -6,6 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.user.UserRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
 import java.util.Map;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Controller
 public class SchoolController {
@@ -99,4 +104,79 @@ public class SchoolController {
 		return mav;
 	}
 
+	@GetMapping("/{id}/edit")
+	public String initUpdateForm(@PathVariable int id, Model model) {
+		School school = schoolRepository.findById(id)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "School not found"));
+		verifyEditPermissions(school);
+		model.addAttribute("school", school);
+		return "schools/createOrUpdateSchoolForm";
+	}
+
+	@PostMapping("/{id}/edit")
+	public String processUpdateForm(@Valid School school, BindingResult result, @PathVariable("id") long id) {
+		School existingSchool = schoolRepository.findById((int) id)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "School not found"));
+
+		verifyEditPermissions(existingSchool);
+
+		if (result.hasErrors()) {
+			return "schools/createOrUpdateSchoolForm";
+		}
+
+		// Prevent standard admins from modifying the status via form tampering
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		boolean isSuperAdmin = auth.getAuthorities().stream()
+			.anyMatch(a -> a.getAuthority().equals("MANAGE_ALL_SCHOOLS"));
+
+		if (!isSuperAdmin) {
+			school.setStatus(existingSchool.getStatus());
+		}
+
+		school.setId(id);
+		schoolRepository.save(school);
+
+		// Strip ".edu" for the redirect to match your slug regex [a-zA-Z-]+
+		String slug = school.getDomain().replace(".edu", "");
+		return "redirect:/schools/" + slug;
+	}
+
+
+	private boolean checkEditPermissions(School school) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		// Handle unauthenticated users safely
+		if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
+			return false;
+		}
+
+		String userEmail = auth.getName();
+
+		boolean isSuperAdmin = auth.getAuthorities().stream()
+			.anyMatch(a -> a.getAuthority().equals("MANAGE_ALL_SCHOOLS"));
+		boolean isSchoolAdmin = auth.getAuthorities().stream()
+			.anyMatch(a -> a.getAuthority().equals("MANAGE_FACILITIES"));
+
+		boolean belongsToSchool = userEmail.endsWith("@" + school.getDomain()) ||
+			userEmail.endsWith("." + school.getDomain());
+
+		return isSuperAdmin || (isSchoolAdmin && belongsToSchool);
+	}
+
+	private void verifyEditPermissions(School school) {
+		if (!checkEditPermissions(school)) {
+			throw new AccessDeniedException("You do not have permission to edit this school.");
+		}
+	}
+
+	@GetMapping("/bad")
+	public void badSchoolRequest() {
+		if (true) {
+			throw new RuntimeException("This is a simulated database failure to test the 500 page stack trace.");
+		}
+	}
 }
+
+
+
+

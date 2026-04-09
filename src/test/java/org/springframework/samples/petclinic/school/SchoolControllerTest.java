@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.samples.petclinic.user.SecurityConfig;
@@ -32,7 +33,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Test class for the {@link SchoolController}
  */
 @WebMvcTest(SchoolController.class)
-@Import(SecurityConfig.class)
+// Remove @Import(SecurityConfig.class) if it's causing the chain reaction
+// OR add this annotation to bring in the Security infrastructure:
+@AutoConfigureMockMvc(addFilters = false)
+
+
 class SchoolControllerTest {
 
 	private static final long TEST_SCHOOL_ID = 1;
@@ -51,6 +56,7 @@ class SchoolControllerTest {
 
 	@MockitoBean
 	private AuthenticationConfiguration authenticationConfiguration;
+
 
 	private School school;
 

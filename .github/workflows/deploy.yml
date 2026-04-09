@@ -23,7 +23,7 @@ jobs:
       # 3. Build the JAR file with Gradle
       # We skip tests here to speed it up, but you can remove '-x test' to be safer
       - name: Build with Gradle
-        run: ./gradlew clean bootJar -x test -x jar
+        run: ./gradlew clean bootJar  -x jar
 
       # 4. Set up Docker Buildx (required for modern Docker builds)
       - name: Set up Docker Buildx

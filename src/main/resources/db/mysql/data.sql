@@ -241,3 +241,5 @@ VALUES
   ('Lentils, Carrots, Curry Powder', 'Simmer until soft.', 'Soup', 'Indian', 'Vegan', 'Healthy Dal'),
   ('Zucchini, Garlic, Olive Oil', 'Sauté zucchini noodles.', 'Main Course', 'Italian', 'Vegan', 'Low carb option');
 
+
+

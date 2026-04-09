@@ -58,6 +58,16 @@ public class SecurityConfig {
 
 				// Require login for the profile and any other user settings
 				.requestMatchers("/users/profile", "/users/delete").authenticated()
+				// 1. PUBLIC: Anyone can browse
+				.requestMatchers(HttpMethod.GET, "/products/**", "/product-recipes/**").permitAll()
+
+				// 2. MANAGER & ADMIN: Create and Update
+				.requestMatchers("/products/new", "/product-recipes/new").hasAnyAuthority("ROLE_MANAGER", "ROLE_ADMIN")
+				.requestMatchers(HttpMethod.POST, "/products/new", "/product-recipes/new").hasAnyAuthority("ROLE_MANAGER", "ROLE_ADMIN")
+				.requestMatchers(HttpMethod.PUT, "/product-recipes/**").hasAnyAuthority("ROLE_MANAGER", "ROLE_ADMIN")
+
+				// 3. ADMIN ONLY: Delete permissions
+				.requestMatchers(HttpMethod.DELETE, "/products/**", "/product-recipes/**").hasAuthority("ROLE_ADMIN")
 
 				// PROTECTED CATCH-ALL (This protects unlisted POST/PUT/DELETE, etc.)
 				.anyRequest().authenticated()
@@ -83,3 +93,4 @@ public class SecurityConfig {
 		return http.build();
 	}
 }
+

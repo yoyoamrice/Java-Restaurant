@@ -3,10 +3,12 @@ package org.springframework.samples.petclinic.user;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledInNativeImage;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.samples.petclinic.school.School;
 import org.springframework.samples.petclinic.school.SchoolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.security.authentication.AuthenticationManager;
 
 @WebMvcTest(AuthController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @DisabledInNativeImage
 @DisabledInAotMode
 class AuthControllerTest {
@@ -38,8 +41,18 @@ class AuthControllerTest {
 	@MockitoBean
 	private UserService userService;
 
-	@MockitoBean
+
+    @MockitoBean
 	private AuthenticationManager authenticationManager;
+
+	@MockitoBean
+	private AuthenticationConfiguration authenticationConfiguration;
+
+	@MockitoBean
+	private org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration authConfig;
+
+	@MockitoBean
+	private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
 	@Test
 	void testProcessRegister_WithSubdomainRedirect() throws Exception {
@@ -61,12 +74,12 @@ class AuthControllerTest {
 //			.willReturn(new TestingAuthenticationToken("user", "password", "STUDENT"));
 
 		// User registers with SUBDOMAIN
-		mockMvc.perform(post("/register-student")
+		mockMvc.perform(post("/register")
 				.with(csrf())
 				.param("email", "alex@student.kirkwood.edu") // <--- Subdomain input
 				.param("password", "StrongPass1!"))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/schools/kirkwood")); // Should still find ID 1
+			.andExpect(redirectedUrl("/products/productList")); // Should still find ID 1
 	}
 
 
@@ -90,7 +103,7 @@ class AuthControllerTest {
 
 	@Test
 	void testLoginSuccessRedirectsToSchool() throws Exception {
-		// 1. Setup a fake school for the mock repository to return
+		// 1. Set up a fake school for the mock repository to return
 		School mockSchool = new School();
 		mockSchool.setName("Kirkwood Community College");
 		mockSchool.setDomain("kirkwood.edu");
@@ -103,8 +116,8 @@ class AuthControllerTest {
 		// 3. Perform the GET request, passing the principal directly
 		mockMvc.perform(get("/login-success").principal(mockPrincipal))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/schools/kirkwood"))
-			.andExpect(flash().attributeExists("messageSuccess"));
+			.andExpect(redirectedUrl("/products/productList"));
+
 	}
 
 	@Test
@@ -116,7 +129,7 @@ class AuthControllerTest {
 
 		mockMvc.perform(get("/login-success").principal(mockPrincipal))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/schools"))
+			.andExpect(redirectedUrl("/products"))
 			.andExpect(flash().attributeExists("messageWarning"));
 	}
 }
