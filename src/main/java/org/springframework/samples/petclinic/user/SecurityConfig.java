@@ -31,8 +31,7 @@ public class SecurityConfig {
 		http
 			.csrf(csrf -> csrf.disable()) // Disable Cross-Site Request Forgery for API development
 			.authorizeHttpRequests(authorize -> authorize
-				// This allows unmapped paths to result in 404, and allows all web viewing.
-				.requestMatchers(HttpMethod.GET).permitAll()
+
 
 				// Require login for the profile and any other user settings
 				.requestMatchers("/users/profile", "/users/delete").authenticated()
@@ -68,9 +67,11 @@ public class SecurityConfig {
 
 				// 3. ADMIN ONLY: Delete permissions
 				.requestMatchers(HttpMethod.DELETE, "/products/**", "/product-recipes/**").hasAuthority("ROLE_ADMIN")
-
+// This allows unmapped paths to result in 404, and allows all web viewing.
+					.requestMatchers(HttpMethod.GET).permitAll()
 				// PROTECTED CATCH-ALL (This protects unlisted POST/PUT/DELETE, etc.)
 				.anyRequest().authenticated()
+
 			)
 			// Ensure all auto-challenge mechanisms are disabled
 			.httpBasic(AbstractHttpConfigurer::disable) // Disable the login popup
