@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,6 +37,7 @@ private final ProductRepository productRepository;
 		return "products/productList";
 
 	}
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/products/new")
 	public String initCreationForm(Model model) {
 		// Instaniate a default object

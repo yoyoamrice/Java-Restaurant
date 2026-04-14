@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'products')}">
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      th:replace="~{fragments/layout :: layout (~{::body},'products')}">
 
 <body>
 
 <h2 th:text="#{products}">Products</h2>
-<a th:href="@{/products/new}" class="btn btn-primary mb-3">
+<a sec:authorize="hasRole('ADMIN')" th:href="@{/products/new}" class="btn btn-primary mb-3">
   <span class="fa fa-plus"></span>
   <span th:text="#{addProduct}">Add Product</span>
 </a>

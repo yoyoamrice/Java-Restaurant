@@ -47,8 +47,8 @@ public class SecurityConfig {
 					"/pets/**",
 					"/vets/**",
 					"/vets.html",
-					"/products",
-					"/products/new"
+					"/products"
+
 
 				).permitAll()
 				// Only SUPER_ADMIN users can add new schools
@@ -59,12 +59,12 @@ public class SecurityConfig {
 				// Require login for the profile and any other user settings
 				.requestMatchers("/users/profile", "/users/delete").authenticated()
 				// 1. PUBLIC: Anyone can browse
-				.requestMatchers(HttpMethod.GET, "/products/**", "/product-recipes/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/products", "/product-recipes").permitAll()
 
 				// 2. MANAGER & ADMIN: Create and Update
-				.requestMatchers("/products/new", "/product-recipes/new").hasAnyAuthority("ROLE_MANAGER", "ROLE_ADMIN")
-				.requestMatchers(HttpMethod.POST, "/products/new", "/product-recipes/new").hasAnyAuthority("ROLE_MANAGER", "ROLE_ADMIN")
-				.requestMatchers(HttpMethod.PUT, "/product-recipes/**").hasAnyAuthority("ROLE_MANAGER", "ROLE_ADMIN")
+				.requestMatchers(HttpMethod.GET,"/products/new", "/product-recipes/new").hasRole("ADMIN")
+				.requestMatchers(HttpMethod.POST, "/products/new", "/product-recipes/new").hasRole( "ADMIN")
+				.requestMatchers(HttpMethod.PUT, "/product-recipes/**").hasRole("ADMIN")
 
 				// 3. ADMIN ONLY: Delete permissions
 				.requestMatchers(HttpMethod.DELETE, "/products/**", "/product-recipes/**").hasAuthority("ROLE_ADMIN")
