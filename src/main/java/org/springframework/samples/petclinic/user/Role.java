@@ -27,15 +27,10 @@ public class Role {
 	@EqualsAndHashCode.Exclude
 	private Set<User> users;
 
-		@ManyToMany(fetch = FetchType.EAGER)
-		@JoinTable(
-			name = "permission_role", // Your exact DB junction table name
-			joinColumns = @JoinColumn(name = "role_id"),
-			inverseJoinColumns = @JoinColumn(name = "permission_id")
-		)
-		@EqualsAndHashCode.Exclude
-		private Set<Permission> permissions;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "permission_role", // Your exact DB junction table name
+			joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
+	@EqualsAndHashCode.Exclude
+	private Set<Permission> permissions;
 
-	}
-
-
+}

@@ -44,6 +44,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+
 /**
  * Integration Test for {@link CrashController}.
  *
@@ -51,7 +52,7 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 // NOT Waiting https://github.com/spring-projects/spring-boot/issues/5574
 @SpringBootTest(webEnvironment = RANDOM_PORT,
-	properties = { "spring.web.error.include-message=ALWAYS", "management.endpoints.access.default=none" })
+		properties = { "spring.web.error.include-message=ALWAYS", "management.endpoints.access.default=none" })
 @AutoConfigureTestRestTemplate
 class CrashControllerIntegrationTests {
 
@@ -64,49 +65,53 @@ class CrashControllerIntegrationTests {
 	@Test
 	void testTriggerExceptionJson() {
 		ResponseEntity<Map<String, Object>> resp = rest.exchange(
-			RequestEntity.get("http://localhost:" + port + "/oups").build(),
-			new ParameterizedTypeReference<Map<String, Object>>() {
-			});
+				RequestEntity.get("http://localhost:" + port + "/oups").build(),
+				new ParameterizedTypeReference<Map<String, Object>>() {
+				});
 		assertThat(resp).isNotNull();
 		assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
 		assertThat(resp.getBody()).containsKey("timestamp");
 		assertThat(resp.getBody()).containsKey("status");
 		assertThat(resp.getBody()).containsKey("error");
 		assertThat(resp.getBody()).containsEntry("message",
-			"Expected: controller used to showcase what happens when an exception is thrown");
+				"Expected: controller used to showcase what happens when an exception is thrown");
 		assertThat(resp.getBody()).containsEntry("path", "/oups");
 	}
 
-//	@Test
-//	void testTriggerExceptionHtml() {
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.setAccept(List.of(MediaType.TEXT_HTML));
-//		ResponseEntity<String> resp = rest.exchange("http://localhost:" + port + "/oups", HttpMethod.GET,
-//			new HttpEntity<>(headers), String.class);
-//		assertThat(resp).isNotNull();
-//		assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-//		assertThat(resp.getBody()).isNotNull();
-//		// html:
-//		assertThat(resp.getBody()).containsSubsequence("<body>", "<h2>", "Something happened...", "</h2>", "<p>",
-//			"Expected:", "controller", "used", "to", "showcase", "what", "happens", "when", "an", "exception", "is",
-//			"thrown", "</p>", "</body>");
-//		// Not the whitelabel error page:
-//		assertThat(resp.getBody()).doesNotContain("Whitelabel Error Page",
-//			"This application has no explicit mapping for");
-//	}
+	// @Test
+	// void testTriggerExceptionHtml() {
+	// HttpHeaders headers = new HttpHeaders();
+	// headers.setAccept(List.of(MediaType.TEXT_HTML));
+	// ResponseEntity<String> resp = rest.exchange("http://localhost:" + port + "/oups",
+	// HttpMethod.GET,
+	// new HttpEntity<>(headers), String.class);
+	// assertThat(resp).isNotNull();
+	// assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+	// assertThat(resp.getBody()).isNotNull();
+	// // html:
+	// assertThat(resp.getBody()).containsSubsequence("<body>", "<h2>", "Something
+	// happened...", "</h2>", "<p>",
+	// "Expected:", "controller", "used", "to", "showcase", "what", "happens", "when",
+	// "an", "exception", "is",
+	// "thrown", "</p>", "</body>");
+	// // Not the whitelabel error page:
+	// assertThat(resp.getBody()).doesNotContain("Whitelabel Error Page",
+	// "This application has no explicit mapping for");
+	// }
 
 	@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class,
-		DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class })
-	@ComponentScan(excludeFilters = @ComponentScan.Filter(
-		type = org.springframework.context.annotation.FilterType.ANNOTATION,
-		classes = org.springframework.web.bind.annotation.ControllerAdvice.class))
+			DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class })
+	@ComponentScan(
+			excludeFilters = @ComponentScan.Filter(type = org.springframework.context.annotation.FilterType.ANNOTATION,
+					classes = org.springframework.web.bind.annotation.ControllerAdvice.class))
 	static class TestConfiguration {
+
 		@Bean
 		public SecurityFilterChain testFilterChain(HttpSecurity http) throws Exception {
-			http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
+			http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
 			return http.build();
 		}
+
 	}
 
 }

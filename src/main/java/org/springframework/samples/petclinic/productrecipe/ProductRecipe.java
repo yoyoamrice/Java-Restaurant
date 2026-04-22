@@ -20,8 +20,13 @@ public class ProductRecipe {
 	private String ingredients;
 
 	private String instructions;
+
 	private String type;
+
 	private String category;
+
 	private String dietaryPreference;
+
 	private String internalNotes;
+
 }

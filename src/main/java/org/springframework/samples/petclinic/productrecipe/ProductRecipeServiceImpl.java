@@ -1,13 +1,13 @@
 package org.springframework.samples.petclinic.productrecipe;
 
-
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Service
 public class ProductRecipeServiceImpl implements ProductRecipeService {
+
 	private final ProductRecipeRepository productRecipeRepository;
 
 	public ProductRecipeServiceImpl(ProductRecipeRepository recipeRepository) {
@@ -16,7 +16,7 @@ public class ProductRecipeServiceImpl implements ProductRecipeService {
 
 	@Override
 	public List<ProductRecipe> getRecipesByType(String type) {
-		if(type == null || type.isEmpty()) {
+		if (type == null || type.isEmpty()) {
 			return productRecipeRepository.findAll();
 		}
 		return productRecipeRepository.findByTypeIgnoreCase(type);
@@ -37,4 +37,5 @@ public class ProductRecipeServiceImpl implements ProductRecipeService {
 		// 3. Otherwise, return everything in that category
 		return categoryRecipes;
 	}
+
 }

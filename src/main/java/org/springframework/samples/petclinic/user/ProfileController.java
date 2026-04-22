@@ -27,11 +27,15 @@ import java.util.Map;
 @Controller
 @RequestMapping("/users")
 public class ProfileController {
+
 	private final UserRepository userRepository;
+
 	private final PasswordEncoder passwordEncoder;
+
 	private final UserDetailsService userDetailsService;
 
-	public ProfileController(UserRepository userRepository, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+	public ProfileController(UserRepository userRepository, PasswordEncoder passwordEncoder,
+			UserDetailsService userDetailsService) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.userDetailsService = userDetailsService;
@@ -49,8 +53,7 @@ public class ProfileController {
 	@GetMapping("/profile")
 	public String showProfileForm(Model model, Principal principal) {
 		String email = principal.getName();
-		User user = userRepository.findByEmail(email)
-			.orElseThrow(() -> new RuntimeException("User not found"));
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 		user.setPassword(""); // This will make the password field blank by default
 
 		// Intercept the 10-digit database string and inject a parentheses
@@ -67,41 +70,42 @@ public class ProfileController {
 		slug = slug.contains(".") ? slug.substring(slug.indexOf(".") + 1) : slug;
 		model.addAttribute("schoolSlug", slug);
 
-
 		model.addAttribute("user", user);
 		return "users/profile";
 	}
 
 	@PostMapping("/profile")
-	public String updateProfile(@Valid @ModelAttribute("user") User updatedUser,
-								BindingResult result,
-								Principal principal,
-								RedirectAttributes redirectAttributes) {
+	public String updateProfile(@Valid @ModelAttribute("user") User updatedUser, BindingResult result,
+			Principal principal, RedirectAttributes redirectAttributes) {
 		String currentEmail = principal.getName();
-		User currentUser = userRepository.findByEmail(currentEmail).orElseThrow(() -> new RuntimeException("User not found"));
+		User currentUser = userRepository.findByEmail(currentEmail)
+			.orElseThrow(() -> new RuntimeException("User not found"));
 
 		// 1. Is the user trying to change their email?
-		if(!currentEmail.equalsIgnoreCase(updatedUser.getEmail())) {
+		if (!currentEmail.equalsIgnoreCase(updatedUser.getEmail())) {
 			// Does the new email address exist in the database?
-			if(userRepository.existsByEmail(updatedUser.getEmail())) {
+			if (userRepository.existsByEmail(updatedUser.getEmail())) {
 				result.rejectValue("email", "duplicateEmail", "This email is already taken");
 			}
 		}
 
 		// 2. Validate password strength manually
-		// Why? Because the registration validation is required in all cases, wheras this one is not.
+		// Why? Because the registration validation is required in all cases, wheras this
+		// one is not.
 		String newPassword = updatedUser.getPassword();
 		boolean isUpdatingPassword = newPassword != null && !newPassword.trim().isEmpty();
 
 		if (isUpdatingPassword) {
 			if (!newPassword.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$")) {
 				// Add this regex check to enforce the character rules
-				result.rejectValue("password", "weakPassword", "Password must be at least 8 characters and must contain uppercase, lowercase, and number");
+				result.rejectValue("password", "weakPassword",
+						"Password must be at least 8 characters and must contain uppercase, lowercase, and number");
 			}
 		}
 
-		if(result.hasErrors()) {
-			return "/users/profile"; // Don't use "redirect", making a GET request will not display errors
+		if (result.hasErrors()) {
+			return "/users/profile"; // Don't use "redirect", making a GET request will
+										// not display errors
 		}
 
 		currentUser.setFirstName(updatedUser.getFirstName());
@@ -111,14 +115,15 @@ public class ProfileController {
 
 		String submittedPhone = updatedUser.getPhone();
 		if (submittedPhone != null && !submittedPhone.trim().isEmpty()) {
-			currentUser.setPhone(submittedPhone.replaceAll("\\D", "")); // Strips all non-numbers
-		} else {
+			currentUser.setPhone(submittedPhone.replaceAll("\\D", "")); // Strips all
+																		// non-numbers
+		}
+		else {
 			currentUser.setPhone(null);
 		}
 
 		currentUser.setPublicEmail(updatedUser.getPublicEmail());
 		currentUser.setPublicPhone(updatedUser.getPublicPhone());
-
 
 		if (isUpdatingPassword) {
 			currentUser.setPassword(passwordEncoder.encode(newPassword));
@@ -135,10 +140,8 @@ public class ProfileController {
 			Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
 
 			// Create a new authentication token with the new email
-			Authentication newAuth = new UsernamePasswordAuthenticationToken(
-				newPrincipal,
-				currentAuth.getCredentials(),
-				newPrincipal.getAuthorities());
+			Authentication newAuth = new UsernamePasswordAuthenticationToken(newPrincipal, currentAuth.getCredentials(),
+					newPrincipal.getAuthorities());
 
 			// Replace the old token in the session memory
 			SecurityContextHolder.getContext().setAuthentication(newAuth);
@@ -147,11 +150,10 @@ public class ProfileController {
 		redirectAttributes.addFlashAttribute("messageSuccess", "Your profile has been updated successfully");
 		return "redirect:/users/profile"; // This makes a new GET request
 	}
+
 	@PostMapping("/delete")
-	public String deleteAccount(Principal principal,
-								HttpServletRequest request,
-								HttpServletResponse response,
-								RedirectAttributes redirectAttributes) {
+	public String deleteAccount(Principal principal, HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes redirectAttributes) {
 		// Finding out who is logged in
 		String email = principal.getName();
 		// Get all of their data from the datbaase
@@ -167,11 +169,9 @@ public class ProfileController {
 			new SecurityContextLogoutHandler().logout(request, response, auth);
 		}
 		// Redirect to the homepage with a farewall message
-		redirectAttributes.addFlashAttribute("messageSuccess", "Your account has been successfully deleted. We're sorry to see you go!");
+		redirectAttributes.addFlashAttribute("messageSuccess",
+				"Your account has been successfully deleted. We're sorry to see you go!");
 		return "redirect:/";
 	}
-
-
-
 
 }

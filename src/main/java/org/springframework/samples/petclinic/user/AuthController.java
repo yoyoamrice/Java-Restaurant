@@ -25,12 +25,16 @@ import java.util.Optional;
 
 @Controller
 public class AuthController {
+
 	private final UserService userService;
+
 	private final SchoolRepository schoolRepository;
+
 	private final AuthenticationManager authenticationManager; // Add this field
 
 	// Add to Constructor
-	public AuthController(UserService userService, SchoolRepository schoolRepository, AuthenticationManager authenticationManager) {
+	public AuthController(UserService userService, SchoolRepository schoolRepository,
+			AuthenticationManager authenticationManager) {
 		this.userService = userService;
 		this.schoolRepository = schoolRepository;
 		this.authenticationManager = authenticationManager;
@@ -44,9 +48,7 @@ public class AuthController {
 
 	@PostMapping("/register")
 	public String processRegisterForm(@Validated(OnRegister.class) @ModelAttribute("user") User user,
-									  BindingResult result,
-									  RedirectAttributes redirectAttributes,
-									  HttpServletRequest request) {
+			BindingResult result, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 		if (result.hasErrors()) {
 			return "auth/registerForm";
 		}
@@ -56,7 +58,8 @@ public class AuthController {
 		// 1. Save the User (UserService handles password hashing)
 		try {
 			userService.registerNewStudent(user);
-		} catch (RuntimeException ex) {
+		}
+		catch (RuntimeException ex) {
 			// Handle duplicate email or other service errors
 			result.rejectValue("email", "duplicateEmail", "This email is already registered");
 			return "auth/registerForm";
@@ -65,15 +68,15 @@ public class AuthController {
 		// To do: Send email verification before auto log in.
 		// 2. LOGIN using the authenticationManager.
 		try {
-			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getEmail(), rawPassword);
+			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getEmail(),
+					rawPassword);
 			Authentication authentication = authenticationManager.authenticate(authToken);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			HttpSession session = request.getSession(true);
-			session.setAttribute(
-				HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-				SecurityContextHolder.getContext()
-			);
-		} catch (Exception e) {
+			session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+					SecurityContextHolder.getContext());
+		}
+		catch (Exception e) {
 			redirectAttributes.addFlashAttribute("messageDanger", "Account created, but auto-login failed.");
 			return "redirect:/login";
 		}
@@ -82,16 +85,10 @@ public class AuthController {
 		String email = user.getEmail();
 		Optional<School> school = findSchoolByRecursiveDomain(email);
 
-		if(school.isPresent()) {
-			redirectAttributes.addFlashAttribute("messageSuccess",
-				"Your user account has been created. You have been redirected to " + school.get().getName() + "'s school page.");
-			return "redirect:/products/productList" ;
-		} else {
-			redirectAttributes.addFlashAttribute("messageWarning",
-				"Your user account has been created, but we could not find a school matching your email domain");
-			// Redirect a user to the schools page if their school was not found.
-			return "redirect:/";
-		}
+		redirectAttributes.addFlashAttribute("messageSuccess",
+				"Your user account has been created. You have been redirected to " + school.get().getName()
+						+ "'s school page.");
+		return "redirect:/products";
 	}
 
 	private Optional<School> findSchoolByRecursiveDomain(String email) {
@@ -119,17 +116,8 @@ public class AuthController {
 		String email = principal.getName();
 		Optional<School> school = findSchoolByRecursiveDomain(email);
 
-		if (school.isPresent()) {
-//			redirectAttributes.addFlashAttribute("messageSuccess",
-//				"Welcome back! You have been redirected to " + school.get().getName() + "'s school page.");
-//			return "redirect:/products/" + school.get().getDomain().substring(0, school.get().getDomain().length() - 4);
-		} else {
-			redirectAttributes.addFlashAttribute("messageWarning",
-				"Welcome back! ");
-			// Redirect a user to the schools page if their school was not found.
-			return "redirect:/products";
-		}
-		return "redirect:/products/productList";
+		redirectAttributes.addFlashAttribute("messageWarning", "Welcome back! ");
+		return "redirect:/products";
 	}
 
 	@GetMapping("/login")
@@ -150,6 +138,5 @@ public class AuthController {
 		model.addAttribute("user", user);
 		return "auth/loginForm";
 	}
-
 
 }

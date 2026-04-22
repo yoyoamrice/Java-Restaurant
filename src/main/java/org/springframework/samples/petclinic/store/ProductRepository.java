@@ -11,12 +11,19 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface ProductRepository extends Repository<Product, Long> {
+
 	@Transactional(readOnly = true)
 	Collection<Product> findAll();
 
 	@Transactional(readOnly = true)
 	Page<Product> findAll(Pageable any);
+
 	void save(Product product);
+
+	@Transactional
+	void deleteById(Long id);
+
+	boolean existsById(Long id);
 
 	@Transactional(readOnly = true)
 	Optional<Product> findById(Long id);
@@ -25,9 +32,4 @@ public interface ProductRepository extends Repository<Product, Long> {
 	@Query("SELECT s FROM Product s WHERE s.domain = :domain")
 	Optional<Product> findByDomain(String domain);
 
-
-
-
 }
-
-

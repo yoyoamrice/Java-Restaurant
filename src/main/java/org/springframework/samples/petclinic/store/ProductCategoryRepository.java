@@ -7,9 +7,11 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface ProductCategoryRepository extends Repository<ProductCategory, Long> {
+
 	@Transactional(readOnly = true)
 	Collection<ProductCategory> findAll();
 
 	@Transactional(readOnly = true)
 	Optional<ProductCategory> findById(Long id);
+
 }

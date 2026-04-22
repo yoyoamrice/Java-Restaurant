@@ -38,15 +38,11 @@ public class RecipeController {
 	}
 
 	@GetMapping("/category/{recipeCategory}")
-	public ResponseEntity<List<Recipe>> getRecipesByCategoryAndDietaryPreference(
-		@PathVariable String recipeCategory,
-		@RequestParam Optional<String> dietaryPreference
-	) {
-		List<Recipe> recipes = recipeService.findByCategoryAndDietaryPreferenceIgnoreCase(
-			recipeCategory,
-			dietaryPreference.orElse(null)
-		);
-		if(recipes.isEmpty()) {
+	public ResponseEntity<List<Recipe>> getRecipesByCategoryAndDietaryPreference(@PathVariable String recipeCategory,
+			@RequestParam Optional<String> dietaryPreference) {
+		List<Recipe> recipes = recipeService.findByCategoryAndDietaryPreferenceIgnoreCase(recipeCategory,
+				dietaryPreference.orElse(null));
+		if (recipes.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(recipes);
@@ -69,10 +65,7 @@ public class RecipeController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Recipe> updateRecipe(
-		@PathVariable Long id,
-		@RequestBody Recipe updatedRecipe
-	) {
+	public ResponseEntity<Recipe> updateRecipe(@PathVariable Long id, @RequestBody Recipe updatedRecipe) {
 		return recipeRepository.findById(id).map(existingRecipe -> {
 			existingRecipe.setIngredients(updatedRecipe.getIngredients());
 			existingRecipe.setInstructions(updatedRecipe.getInstructions());
@@ -93,4 +86,5 @@ public class RecipeController {
 		recipeRepository.deleteById(id);
 		return ResponseEntity.noContent().build(); // 204
 	}
+
 }

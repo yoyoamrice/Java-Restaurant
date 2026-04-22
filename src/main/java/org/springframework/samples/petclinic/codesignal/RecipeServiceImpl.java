@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class RecipeServiceImpl implements RecipeService{
+public class RecipeServiceImpl implements RecipeService {
+
 	private final RecipeRepository recipeRepository;
 
 	public RecipeServiceImpl(RecipeRepository recipeRepository) {
@@ -15,7 +16,7 @@ public class RecipeServiceImpl implements RecipeService{
 
 	@Override
 	public List<Recipe> getRecipesByType(String type) {
-		if(type == null || type.isEmpty()) {
+		if (type == null || type.isEmpty()) {
 			return recipeRepository.findAll();
 		}
 		return recipeRepository.findByTypeIgnoreCase(type);
@@ -36,4 +37,5 @@ public class RecipeServiceImpl implements RecipeService{
 		// 3. Otherwise, return everything in that category
 		return categoryRecipes;
 	}
+
 }

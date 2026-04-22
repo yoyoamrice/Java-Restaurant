@@ -1,17 +1,21 @@
-package org.springframework.samples.petclinic.user;
+package org.springframework.samples.petclinic.user; // Ensure this is correct!
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
 	@Bean
@@ -21,77 +25,68 @@ public class SecurityConfig {
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-		// Make the AuthenticationManager (which knows about your UserDetailsService)
-		// available for injection in your controllers.
 		return config.getAuthenticationManager();
 	}
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-			.csrf(csrf -> csrf.disable()) // Disable Cross-Site Request Forgery for API development
+		http.csrf(AbstractHttpConfigurer::disable) // Fixed the disable syntax
 			.authorizeHttpRequests(authorize -> authorize
 
+				// --- 1. PRODUCT & RECIPE RESTRICTIONS (First Priority) ---
 
-				// Require login for the profile and any other user settings
-				.requestMatchers("/users/profile", "/users/delete").authenticated()
+				// DELETE: Only Admin
+				.requestMatchers("/products/{id}/delete", "/product-recipes/{id}/delete")
+				.hasRole("ADMIN")
 
-				// Allows guest users to make POST requests
-				.requestMatchers(
-					"/",
-					"/register-student",
-					"/resources/**",
-					"/recipes/**",
-					"/recipes/new",
-					"/pets/**",
-					"/vets/**",
-					"/vets.html",
-					"/products"
+				// CREATE & EDIT: Admin and Manager
+				.requestMatchers("/products/new", "/products/{id}/edit", "/product-recipes/new")
+				.hasAnyRole("ADMIN", "MANAGER")
 
+				// POST/PUT: Ensure they can actually save the forms
+				.requestMatchers(HttpMethod.POST, "/products/**", "/product-recipes/**")
+				.hasAnyRole("ADMIN", "MANAGER")
+				.requestMatchers(HttpMethod.PUT, "/product-recipes/**")
+				.hasAnyRole("ADMIN", "MANAGER")
 
-				).permitAll()
-				// Only SUPER_ADMIN users can add new schools
-				.requestMatchers("/schools/new").hasAuthority("MANAGE_ALL_SCHOOLS")
-				// All users can access the list of schools and individual schools
-				.requestMatchers(HttpMethod.GET, "/schools", "/schools/{slug:[a-zA-Z-]+}").permitAll()
+				// --- 2. EXISTING SCHOOL & USER CONFIGS ---
 
-				// Require login for the profile and any other user settings
-				.requestMatchers("/users/profile", "/users/delete").authenticated()
-				// 1. PUBLIC: Anyone can browse
-				.requestMatchers(HttpMethod.GET, "/products", "/product-recipes").permitAll()
+				.requestMatchers("/users/profile", "/users/delete")
+				.authenticated()
+				.requestMatchers("/schools/new")
+				.hasAuthority("MANAGE_ALL_SCHOOLS")
+				.requestMatchers(HttpMethod.GET, "/schools", "/schools/{slug:[a-zA-Z-]+}")
+				.permitAll()
 
-				// 2. MANAGER & ADMIN: Create and Update
-				.requestMatchers(HttpMethod.GET,"/products/new", "/product-recipes/new").hasRole("ADMIN")
-				.requestMatchers(HttpMethod.POST, "/products/new", "/product-recipes/new").hasRole( "ADMIN")
-				.requestMatchers(HttpMethod.PUT, "/product-recipes/**").hasRole("ADMIN")
+				// --- 3. PUBLIC & GENERAL ACCESS ---
 
-				// 3. ADMIN ONLY: Delete permissions
-				.requestMatchers(HttpMethod.DELETE, "/products/**", "/product-recipes/**").hasAuthority("ROLE_ADMIN")
-// This allows unmapped paths to result in 404, and allows all web viewing.
-					.requestMatchers(HttpMethod.GET).permitAll()
-				// PROTECTED CATCH-ALL (This protects unlisted POST/PUT/DELETE, etc.)
-				.anyRequest().authenticated()
+				.requestMatchers("/", "/register-student", "/register", "/login", "/resources/**", "/recipes/**",
+						"/recipes/new", "/pets/**", "/vets/**", "/vets.html", "/products", // List
+																							// view
+																							// is
+																							// public
+						"/products/{id}", // Single product view is public
+						"/product-recipes", "/api/**")
+				.permitAll()
 
-			)
-			// Ensure all auto-challenge mechanisms are disabled
-			.httpBasic(AbstractHttpConfigurer::disable) // Disable the login popup
-			.formLogin(form -> form
-				.loginPage("/login") // Tells Spring where your custom HTML is
-				.usernameParameter("email") // Tells your security configuration to look for email instead of username.
-				.defaultSuccessUrl("/login-success", true) // Where to go after successful login
+				// Fallback for any other GET requests
+				.requestMatchers(HttpMethod.GET)
+				.permitAll()
+				// Everything else requires authentication
+				.anyRequest()
+				.authenticated())
+			.httpBasic(AbstractHttpConfigurer::disable)
+			.formLogin(form -> form.loginPage("/login")
+				.usernameParameter("email")
+				.defaultSuccessUrl("/login-success", true)
 				.failureHandler((request, response, exception) -> {
 					request.getSession().setAttribute("LAST_EMAIL", request.getParameter("email"));
 					response.sendRedirect("/login?error");
 				})
-				.permitAll()
-			)
-			.logout(logout -> logout
-				.logoutUrl("/logout")
-				.logoutSuccessUrl("/login?logout") // Triggers the green alert box
-				.permitAll()
-			);
+				.permitAll())
+			.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login?logout").permitAll());
 
 		return http.build();
 	}
-}
 
+}

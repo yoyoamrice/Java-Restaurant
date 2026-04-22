@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.store;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,60 +14,70 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@RequestMapping("/products")
+@RequiredArgsConstructor
 public class ProductController {
-private final ProductRepository productRepository;
 
-	private final ProductCategoryRepository categoryRepository;
+	private final ProductService productService;
 
-	public ProductController(ProductRepository productRepository, ProductCategoryRepository categoryRepository) {
-		this.productRepository = productRepository;
-		this.categoryRepository = categoryRepository;
-	}
-	@GetMapping("/products")
-	public String showProductList(
-		@RequestParam(defaultValue = "1") int page, Model model) {
-		// Pagination setup (5 items per page)
+	// READ: View all List
+	@GetMapping
+	public String showProductList(@RequestParam(defaultValue = "1") int page, Model model) {
 		Pageable pageable = PageRequest.of(page - 1, 5);
-		Page<Product> productPage = productRepository.findAll(pageable);
+		Page<Product> productPage = productService.findAllProducts(pageable);
 
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", productPage.getTotalPages());
-		model.addAttribute("totalItems", productPage.getTotalElements());
 		model.addAttribute("listProducts", productPage.getContent());
-
-		return "products/productList";
-
+		return "products/productList"; // Consistent folder path
 	}
-	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping("/products/new")
-	public String initCreationForm(Model model) {
-		// Instaniate a default object
-		Product product = new Product();
-		// Add school to input model so Thymeleaf can bind data to it
+
+	// 1. VIEW Details: Matches th:href="@{/products/{id}(id=${product.id})}"
+	@GetMapping("/{id}")
+	public String viewProduct(@PathVariable("id") Long id, Model model) {
+		Product product = productService.findProductById(id)
+			.orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + id));
 		model.addAttribute("product", product);
-		// Fetch all categories from the repository and add to the model
-		List<ProductCategory> categories = categoryRepository.findAll().stream().toList();
-		model.addAttribute("categories", categories);
+		return "products/productDetails"; // Changed to match your folder structure
+	}
+
+	// 2. CREATE Form
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+	@GetMapping("/new")
+	public String initCreationForm(Model model) {
+		model.addAttribute("product", new Product());
+		model.addAttribute("categories", productService.findAllCategories());
 		return "products/createOrUpdateProductForm";
 	}
 
-	@GetMapping("/products/{id}")
-	public String showProductDetails(@PathVariable Long id, Model model) {
-
-		Product product = productRepository.findById(id)
+	// 3. EDIT Form: Matches th:href="@{/products/{id}/edit(id=${product.id})}"
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+	@GetMapping("/{id}/edit")
+	public String initUpdateForm(@PathVariable("id") Long id, Model model) {
+		Product product = productService.findProductById(id)
 			.orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + id));
-
 		model.addAttribute("product", product);
-		return "products/productDetails";
+		model.addAttribute("categories", productService.findAllCategories());
+		return "products/createOrUpdateProductForm";
 	}
-	@PostMapping("/products/new")
-	public String processCreationForm(@Valid Product product, BindingResult result) {
 
+	// 4. SAVE/PROCESS (Post): Handles both New and Edit saves
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+	@PostMapping({ "/new", "/{id}/edit" })
+	public String processProductForm(@Valid Product product, BindingResult result, Model model) {
 		if (result.hasErrors()) {
+			model.addAttribute("categories", productService.findAllCategories());
 			return "products/createOrUpdateProductForm";
 		}
+		productService.saveProduct(product);
+		return "redirect:/products";
+	}
 
-		productRepository.save(product);
+	// 5. DELETE: Matches th:href="@{/products/{id}/delete(id=${product.id})}"
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/{id}/delete")
+	public String deleteProduct(@PathVariable("id") Long id) {
+		productService.deleteProduct(id);
 		return "redirect:/products";
 	}
 

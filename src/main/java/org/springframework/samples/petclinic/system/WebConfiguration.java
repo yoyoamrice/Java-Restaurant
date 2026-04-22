@@ -31,12 +31,12 @@ public class WebConfiguration implements WebMvcConfigurer {
 	 * Defaults to English if nothing is specified.
 	 * @return session-based {@link LocaleResolver}
 	 */
-//	@Bean
-//	public LocaleResolver localeResolver() {
-//		SessionLocaleResolver resolver = new SessionLocaleResolver();
-//		resolver.setDefaultLocale(Locale.ENGLISH);
-//		return resolver;
-//	}
+	// @Bean
+	// public LocaleResolver localeResolver() {
+	// SessionLocaleResolver resolver = new SessionLocaleResolver();
+	// resolver.setDefaultLocale(Locale.ENGLISH);
+	// return resolver;
+	// }
 	@Bean
 	public LocaleResolver localeResolver() {
 		// Creates a cookie named "PREFERRED_LANGUAGE"

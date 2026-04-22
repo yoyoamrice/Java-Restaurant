@@ -20,10 +20,10 @@ import java.util.Set;
 @NoArgsConstructor
 public class User extends BaseEntity {
 
-	@Column(name="first_name", nullable = true, length = 50)
+	@Column(name = "first_name", nullable = true, length = 50)
 	private String firstName;
 
-	@Column(name="last_name", nullable = true, length = 50)
+	@Column(name = "last_name", nullable = true, length = 50)
 	private String lastName;
 
 	@Column(name = "nickname", length = 50)
@@ -36,26 +36,24 @@ public class User extends BaseEntity {
 	@NotEmpty(message = "Email is required")
 	@Email(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Invalid email format")
 	private String email;
+
 	@Column(name = "public_email")
 
 	private Boolean publicEmail;
 
 	@Column(name = "phone", length = 255)
 	@Pattern(regexp = "^$|^(?:\\+\\d{1,3}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$",
-		message = "Please enter a valid phone number")
+			message = "Please enter a valid phone number")
 	private String phone;
 
 	@Column(name = "public_phone")
 	private Boolean publicPhone;
 
-
-
-	@Column(name="password_hash", nullable = true, length = 255)
+	@Column(name = "password_hash", nullable = true, length = 255)
 	@NotEmpty(message = "Password is required", groups = OnRegister.class)
 	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$",
-		message = "Password must be at least 8 characters and must contain uppercase, lowercase, and number",
-		groups = OnRegister.class
-	)
+			message = "Password must be at least 8 characters and must contain uppercase, lowercase, and number",
+			groups = OnRegister.class)
 	private String password;
 
 	@CreationTimestamp
@@ -71,13 +69,17 @@ public class User extends BaseEntity {
 
 	// Many-to-Many Relationship with Role
 	@ManyToMany(fetch = FetchType.EAGER) // Fetch roles immediately when a user is loaded
-	@JoinTable(
-		name = "user_roles", // Name of the junction table in MySQL
-		joinColumns = @JoinColumn(name = "user_id"), // Column in user_roles that references the 'users' table
-		inverseJoinColumns = @JoinColumn(name = "role_id") // Column in user_roles that references the 'roles' table
+	@JoinTable(name = "user_roles", // Name of the junction table in MySQL
+			joinColumns = @JoinColumn(name = "user_id"), // Column in user_roles that
+															// references the 'users'
+															// table
+			inverseJoinColumns = @JoinColumn(name = "role_id") // Column in user_roles
+																// that references the
+																// 'roles' table
 	)
 	@EqualsAndHashCode.Exclude
 	private Set<Role> roles;
+
 	@Column(name = "preferred_language")
 	private String preferredLanguage;
 

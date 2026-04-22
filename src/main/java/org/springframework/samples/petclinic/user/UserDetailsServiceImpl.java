@@ -49,4 +49,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			.authorities(authorities) // Replaced .roles() with .authorities()
 			.build();
 	}
+
 }

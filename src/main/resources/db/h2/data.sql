@@ -51,3 +51,7 @@ INSERT INTO visits VALUES (default, 7, '2013-01-01', 'rabies shot');
 INSERT INTO visits VALUES (default, 8, '2013-01-02', 'rabies shot');
 INSERT INTO visits VALUES (default, 8, '2013-01-03', 'neutered');
 INSERT INTO visits VALUES (default, 7, '2013-01-04', 'spayed');
+
+INSERT IGNORE INTO product_categories (id, name) VALUES (1, 'Furniture');
+INSERT IGNORE INTO products (id, name, domain, quantity, price, product_category_id)
+VALUES (1, 'Chair', 'Home Decor', 10, 49.99, 1);

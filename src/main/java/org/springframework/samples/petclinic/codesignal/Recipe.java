@@ -15,8 +15,10 @@ public class Recipe {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "recipe_ingredients") // This tells JPA the database column name is "recipe_ingredients"
-	@JsonProperty("recipe_ingredients") // This tells Jackson the JSON key name is "recipe_ingredients"
+	@Column(name = "recipe_ingredients") // This tells JPA the database column name is
+											// "recipe_ingredients"
+	@JsonProperty("recipe_ingredients") // This tells Jackson the JSON key name is
+										// "recipe_ingredients"
 	private String ingredients;
 
 	private String instructions;
@@ -29,4 +31,5 @@ public class Recipe {
 	private String dietaryPreference;
 
 	private String internalNotes;
+
 }

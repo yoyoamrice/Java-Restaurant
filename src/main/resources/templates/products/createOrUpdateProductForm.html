@@ -4,8 +4,7 @@
 <body>
 
 <h2 th:text="#{addProduct}">Add Product</h2>
-
-<form th:action="@{/products/new}" th:object="${product}" class="form-horizontal" id="add-school-form" method="post">
+<form th:action="@{/products/new}" th:object="${product}" class="form-horizontal" id="add-product-form" method="post">
 
   <input th:replace="~{fragments/inputField :: input (#{label.product.name}, 'name', 'text')}" />
 
@@ -36,3 +35,44 @@
 
 </body>
 </html>
+
+```
+<!--<html xmlns:th="https://www.thymeleaf.org"-->
+<!--      th:replace="~{fragments/layout :: layout (~{::body},'product')}">-->
+
+<!--<body>-->
+
+<!--<h2 th:text="#{addProduct}">Add Product</h2>-->
+
+<!--<form th:action="@{/products/new}" th:object="${product}" class="form-horizontal" id="add-school-form" method="post">-->
+
+<!--  <input th:replace="~{fragments/inputField :: input (#{label.product.name}, 'name', 'text')}" />-->
+
+<!--  <input th:replace="~{fragments/inputField :: input (#{label.product.domain}, 'domain', 'text')}" />-->
+<!--  <input th:replace="~{fragments/inputField :: input (#{price}, 'price', 'text')}" />-->
+<!--  <input th:replace="~{fragments/inputField :: input (#{quantity}, 'quantity', 'text')}" />-->
+
+<!--  <div class="form-group">-->
+<!--    <label class="col-sm-2 control-label" th:text="#{label.product.category}">Category</label>-->
+<!--    <div class="col-sm-10">-->
+
+<!--      <select th:field="*{productCategory}" class="form-control">-->
+<!--        <option value="">&#45;&#45; Select a Category &#45;&#45;</option>-->
+<!--        <option th:each="cat : ${categories}"-->
+<!--                th:value="${cat.id}"-->
+<!--                th:text="${cat.name}">Category Name</option>-->
+
+<!--      </select>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <div class="form-group">-->
+<!--    <div class="col-sm-offset-2 col-sm-10">-->
+<!--      <button class="btn btn-primary" type="submit" th:text="#{addProduct}">Add Product</button>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--</form>-->
+
+<!--</body>-->
+<!--</html>-->
+

@@ -14,19 +14,22 @@ import java.math.BigDecimal;
 @Table(name = "products")
 @Getter
 @Setter
-public class Product extends NamedEntity{
+public class Product extends NamedEntity {
+
 	@Column
-	@NotEmpty(message="Domain is required")
+	@NotEmpty(message = "Domain is required")
 	private String domain;
+
 	@Column(nullable = true)
-	@NotNull(message="Quantity is required")
+	@NotNull(message = "Quantity is required")
 
-	@Positive( message = "Must be a positive integer")
+	@Positive(message = "Must be a positive integer")
 	private Integer quantity;
-	@NotNull(message="Price is required")
 
-	@Positive(message="must be positive decimal")
-	@Digits(integer = 6, fraction = 2, message="must be positive decimal")
+	@NotNull(message = "Price is required")
+
+	@Positive(message = "must be positive decimal")
+	@Digits(integer = 6, fraction = 2, message = "must be positive decimal")
 	@Column(precision = 8, scale = 2)
 	private BigDecimal price;
 
@@ -34,6 +37,4 @@ public class Product extends NamedEntity{
 	@JoinColumn(name = "product_category_id")
 	private ProductCategory productCategory;
 
-
-	}
-
+}

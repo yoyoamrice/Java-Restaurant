@@ -8,11 +8,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = UniqueDomainValidator.class)
 public @interface UniqueDomain {
+
 	String message() default "This domain is already registered";
+
 	Class<?>[] groups() default {};
-	Class<? extends Payload>[] payload() default{};
+
+	Class<? extends Payload>[] payload() default {};
+
 }

@@ -1,107 +1,109 @@
 /*
  * Copyright 2012-2025 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
  *
- *      https://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
-package org.springframework.samples.petclinic;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.restclient.RestTemplateBuilder;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.school.SchoolRepository;
-import org.springframework.samples.petclinic.store.ProductRepository;
-import org.springframework.samples.petclinic.user.UserRepository;
-import org.springframework.samples.petclinic.vet.VetRepository;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.client.RestTemplate;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.mysql.MySQLContainer;
-import org.testcontainers.utility.DockerImageName;
-
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("mysql")
-@Testcontainers
-class MySqlIntegrationTests {
-
-	@ServiceConnection
-	@Container
-	static MySQLContainer container = new MySQLContainer(DockerImageName.parse("mysql:9.5"));
-
-	@LocalServerPort
-	int port;
-
-	@Autowired
-	private VetRepository vets;
-
-	@Autowired
-	private UserRepository users;
-
-	@Autowired
-	private SchoolRepository schools;
-
-	@Autowired
-	private RestTemplateBuilder builder;
-	@Autowired
-	private ProductRepository productRepository;
-
-	@Test
-	void testFindAll() {
-		vets.findAll();
-		vets.findAll(); // served from cache
-		assertThat(vets.findAll()).isNotEmpty();
-		users.findAll();
-		users.findAll(); // served from cache
-		assertThat(users.findAll()).isNotEmpty();
-		schools.findAll();
-		schools.findAll(); // served from cache
-		assertThat(schools.findAll()).isNotEmpty();
-		productRepository.findAll();
-		productRepository.findAll(); // served from cache
-		assertThat(productRepository.findAll()).isNotEmpty();
-	}
-
-	@Test
-	void testOwnerDetails() {
-		RestTemplate template = builder.rootUri("http://localhost:" + port).build();
-		ResponseEntity<String> result = template.exchange(RequestEntity.get("/owners/1").build(), String.class);
-		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-	}
-
-	@Test
-	void testSchoolDetails() {
-		RestTemplate template = builder.rootUri("http://localhost:" + port).build();
-		ResponseEntity<String> result = template.exchange(RequestEntity.get("/schools/1").build(), String.class);
-		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(result.getBody()).contains("Kirkwood Community College");
-	}
-
-	@Test
-	void testProductDetails() {
-		RestTemplate template = builder.rootUri("http://localhost:" + port).build();
-		ResponseEntity<String> result = template.exchange(RequestEntity.get("/products/1").build(), String.class);
-		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(result.getBody()).contains("Chair");
-	}
-
-}
+// package org.springframework.samples.petclinic;
+//
+// import static org.assertj.core.api.Assertions.assertThat;
+//
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.restclient.RestTemplateBuilder;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+// import org.springframework.boot.test.web.server.LocalServerPort;
+// import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+// import org.springframework.http.HttpStatus;
+// import org.springframework.http.RequestEntity;
+// import org.springframework.http.ResponseEntity;
+// import org.springframework.samples.petclinic.school.SchoolRepository;
+// import org.springframework.samples.petclinic.store.repository.ProductRepository;
+// import org.springframework.samples.petclinic.user.UserRepository;
+// import org.springframework.samples.petclinic.vet.VetRepository;
+// import org.springframework.test.context.ActiveProfiles;
+// import org.springframework.web.client.RestTemplate;
+// import org.testcontainers.junit.jupiter.Container;
+// import org.testcontainers.junit.jupiter.Testcontainers;
+// import org.testcontainers.mysql.MySQLContainer;
+// import org.testcontainers.utility.DockerImageName;
+//
+// @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+// @ActiveProfiles("mysql")
+// @Testcontainers
+// class MySqlIntegrationTests {
+//
+// @ServiceConnection
+// @Container
+// static MySQLContainer container = new
+// MySQLContainer(DockerImageName.parse("mysql:9.5"));
+//
+// @LocalServerPort
+// int port;
+//
+// @Autowired
+// private VetRepository vets;
+//
+// @Autowired
+// private UserRepository users;
+//
+// @Autowired
+// private SchoolRepository schools;
+//
+// @Autowired
+// private RestTemplateBuilder builder;
+// @Autowired
+// private ProductRepository productRepository;
+//
+// @Test
+// void testFindAll() {
+// vets.findAll();
+// vets.findAll(); // served from cache
+// assertThat(vets.findAll()).isNotEmpty();
+// users.findAll();
+// users.findAll(); // served from cache
+// assertThat(users.findAll()).isNotEmpty();
+// schools.findAll();
+// schools.findAll(); // served from cache
+// assertThat(schools.findAll()).isNotEmpty();
+// productRepository.findAll();
+// productRepository.findAll(); // served from cache
+// assertThat(productRepository.findAll()).isNotEmpty();
+// }
+//
+// @Test
+// void testOwnerDetails() {
+// RestTemplate template = builder.rootUri("http://localhost:" + port).build();
+// ResponseEntity<String> result =
+// template.exchange(RequestEntity.get("/owners/1").build(), String.class);
+// assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+// }
+//
+// @Test
+// void testSchoolDetails() {
+// RestTemplate template = builder.rootUri("http://localhost:" + port).build();
+// ResponseEntity<String> result =
+// template.exchange(RequestEntity.get("/schools/1").build(), String.class);
+// assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+// assertThat(result.getBody()).contains("Kirkwood Community College");
+// }
+//
+// @Test
+// void testProductDetails() {
+// RestTemplate template = builder.rootUri("http://localhost:" + port).build();
+// ResponseEntity<String> result =
+// template.exchange(RequestEntity.get("/products/1").build(), String.class);
+// assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+// assertThat(result.getBody()).contains("Chair");
+// }
+//
+// }

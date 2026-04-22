@@ -36,7 +36,6 @@ class UserDetailsServiceImplTest {
 		viewLeaguesPermission.setName("VIEW_LEAGUES");
 		studentRole.setPermissions(Set.of(viewLeaguesPermission));
 
-
 		testUser.setRoles(Set.of(studentRole));
 	}
 
@@ -52,12 +51,12 @@ class UserDetailsServiceImplTest {
 		// Assert
 		assertNotNull(userDetails);
 		assertEquals(testUser.getEmail(), userDetails.getUsername());
-		assertTrue(userDetails.getAuthorities().stream()
-			.anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT")));
+		assertTrue(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT")));
 		assertEquals(testUser.getPassword(), userDetails.getPassword());
 		// Check that the roles were loaded correctly
 		assertTrue(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT")));
 
 		verify(userRepository, times(1)).findByEmail(testUser.getEmail());
 	}
+
 }

@@ -22,4 +22,5 @@ public class Permission extends BaseEntity {
 	@ManyToMany(mappedBy = "permissions")
 	@EqualsAndHashCode.Exclude
 	private Set<Role> roles;
+
 }

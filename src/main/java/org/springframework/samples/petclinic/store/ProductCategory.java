@@ -17,4 +17,3 @@ import java.util.List;
 public class ProductCategory extends NamedEntity {
 
 }
-
