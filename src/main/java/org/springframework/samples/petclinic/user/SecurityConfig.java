@@ -61,12 +61,12 @@ public class SecurityConfig {
 				// --- 3. PUBLIC & GENERAL ACCESS ---
 
 				.requestMatchers("/", "/register-student", "/register", "/login", "/resources/**", "/recipes/**",
-						"/recipes/new", "/pets/**", "/vets/**", "/vets.html", "/products", // List
-																							// view
-																							// is
-																							// public
-						"/products/{id}", // Single product view is public
-						"/product-recipes", "/api/**")
+					"/recipes/new", "/pets/**", "/vets/**", "/vets.html", "/products", // List
+					// view
+					// is
+					// public
+					"/products/{id}", // Single product view is public
+					"/product-recipes", "/api/**")
 				.permitAll()
 
 				// Fallback for any other GET requests

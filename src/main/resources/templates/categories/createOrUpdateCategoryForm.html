@@ -1,0 +1,24 @@
+<html xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'categories')}">
+
+<body>
+
+<h2>Add / Edit Category</h2>
+
+<form th:action="${category.id} == null
+        ? @{/categories/new}
+        : @{/categories/{id}/edit(id=${category.id})}"
+      th:object="${category}"
+      class="form-horizontal"
+      method="post">
+
+  <input th:replace="~{fragments/inputField :: input ('Name', 'name', 'text')}" />
+
+  <div class="form-group">
+    <button class="btn btn-primary" type="submit">Save</button>
+  </div>
+
+</form>
+
+</body>
+</html>

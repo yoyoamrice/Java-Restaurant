@@ -14,4 +14,9 @@ public interface ProductCategoryRepository extends Repository<ProductCategory, L
 	@Transactional(readOnly = true)
 	Optional<ProductCategory> findById(Long id);
 
+	void save(ProductCategory category);
+
+	@Transactional
+	void deleteById(Long id);
+
 }

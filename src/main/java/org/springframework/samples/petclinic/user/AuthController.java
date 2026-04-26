@@ -83,11 +83,10 @@ public class AuthController {
 
 		// 3. Redirect a new user
 		String email = user.getEmail();
-		Optional<School> school = findSchoolByRecursiveDomain(email);
+//		Optional<School> school = findSchoolByRecursiveDomain(email);
 
 		redirectAttributes.addFlashAttribute("messageSuccess",
-				"Your user account has been created. You have been redirected to " + school.get().getName()
-						+ "'s school page.");
+				"Your user account has been created. You have been redirected to the product page.");
 		return "redirect:/products";
 	}
 
