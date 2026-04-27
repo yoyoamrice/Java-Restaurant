@@ -1,77 +1,41 @@
 <html xmlns:th="https://www.thymeleaf.org"
       th:replace="~{fragments/layout :: layout (~{::body},'product')}">
-
 <body>
 
-<h2 th:text="#{addProduct}">Add Product</h2>
-<form th:action="@{/products/new}" th:object="${product}" class="form-horizontal" id="add-product-form" method="post">
+<h2 th:text="${product.id == null} ? 'Add Product' : 'Edit Product'">Product</h2>
 
-  <input th:replace="~{fragments/inputField :: input (#{label.product.name}, 'name', 'text')}" />
+<form th:object="${product}" method="post"
+      th:action="${product.id == null} ? @{/products/new} : @{/products/{id}/edit(id=${product.id})}"
+      class="form-horizontal">
 
-  <input th:replace="~{fragments/inputField :: input (#{label.product.domain}, 'domain', 'text')}" />
-  <input th:replace="~{fragments/inputField :: input (#{price}, 'price', 'text')}" />
-  <input th:replace="~{fragments/inputField :: input (#{quantity}, 'quantity', 'text')}" />
+  <input type="hidden" th:field="*{id}" />
+
+  <input th:replace="~{fragments/inputField :: input ('Name', 'name', 'text')}" />
+  <input th:replace="~{fragments/inputField :: input ('Domain', 'domain', 'text')}" />
+  <input th:replace="~{fragments/inputField :: input ('Price', 'price', 'text')}" />
+  <input th:replace="~{fragments/inputField :: input ('Quantity', 'quantity', 'text')}" />
 
   <div class="form-group">
-    <label class="col-sm-2 control-label" th:text="#{label.product.category}">Category</label>
+    <label class="col-sm-2 control-label">Category</label>
     <div class="col-sm-10">
-
       <select th:field="*{productCategory}" class="form-control">
         <option value="">-- Select a Category --</option>
         <option th:each="cat : ${categories}"
                 th:value="${cat.id}"
-                th:text="${cat.name}">Category Name</option>
-
+                th:text="${cat.name}">Category</option>
       </select>
     </div>
   </div>
+
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button class="btn btn-primary" type="submit" th:text="#{addProduct}">Add Product</button>
+      <button class="btn btn-primary" type="submit"
+              th:text="${product.id == null} ? 'Save Product' : 'Update Product'">
+        Submit
+      </button>
     </div>
   </div>
-
 </form>
 
 </body>
 </html>
-
-```
-<!--<html xmlns:th="https://www.thymeleaf.org"-->
-<!--      th:replace="~{fragments/layout :: layout (~{::body},'product')}">-->
-
-<!--<body>-->
-
-<!--<h2 th:text="#{addProduct}">Add Product</h2>-->
-
-<!--<form th:action="@{/products/new}" th:object="${product}" class="form-horizontal" id="add-school-form" method="post">-->
-
-<!--  <input th:replace="~{fragments/inputField :: input (#{label.product.name}, 'name', 'text')}" />-->
-
-<!--  <input th:replace="~{fragments/inputField :: input (#{label.product.domain}, 'domain', 'text')}" />-->
-<!--  <input th:replace="~{fragments/inputField :: input (#{price}, 'price', 'text')}" />-->
-<!--  <input th:replace="~{fragments/inputField :: input (#{quantity}, 'quantity', 'text')}" />-->
-
-<!--  <div class="form-group">-->
-<!--    <label class="col-sm-2 control-label" th:text="#{label.product.category}">Category</label>-->
-<!--    <div class="col-sm-10">-->
-
-<!--      <select th:field="*{productCategory}" class="form-control">-->
-<!--        <option value="">&#45;&#45; Select a Category &#45;&#45;</option>-->
-<!--        <option th:each="cat : ${categories}"-->
-<!--                th:value="${cat.id}"-->
-<!--                th:text="${cat.name}">Category Name</option>-->
-
-<!--      </select>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--  <div class="form-group">-->
-<!--    <div class="col-sm-offset-2 col-sm-10">-->
-<!--      <button class="btn btn-primary" type="submit" th:text="#{addProduct}">Add Product</button>-->
-<!--    </div>-->
-<!--  </div>-->
-
-<!--</form>-->
-
-<!--</body>-->
-<!--</html>-->

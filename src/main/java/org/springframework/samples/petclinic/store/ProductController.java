@@ -50,7 +50,7 @@ public class ProductController {
 		return "products/createOrUpdateProductForm";
 	}
 
-	// 3. EDIT Form: Matches th:href="@{/products/{id}/edit(id=${product.id})}"
+	// 3. EDIT Form: Allows both ADMIN and MANAGER to access
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 	@GetMapping("/{id}/edit")
 	public String initUpdateForm(@PathVariable("id") Long id, Model model) {
@@ -61,7 +61,7 @@ public class ProductController {
 		return "products/createOrUpdateProductForm";
 	}
 
-	// 4. SAVE/PROCESS (Post): Handles both New and Edit saves
+	// 4. SAVE/PROCESS: Handles the actual update logic
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 	@PostMapping({ "/new", "/{id}/edit" })
 	public String processProductForm(@Valid Product product, BindingResult result, Model model) {

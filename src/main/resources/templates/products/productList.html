@@ -14,6 +14,9 @@
 <table id="products" class="table table-striped">
   <thead>
   <tr>
+
+
+
     <!--    <th th:text="#{name}">Name</th>-->
     <!--    <th th:text="#{label.product.domain}">Country of Origin</th>-->
     <!--    <th th:text="#{quantity}">Quantity</th>-->
@@ -40,8 +43,7 @@
   <tr th:each="product : ${listProducts}">
     <td th:text="${product.name}">Product Name</td>
     <td>
-      <a th:href="@{/products/{id}(id=${product.id})}"
-         class="btn btn-sm btn-success">View</a>
+      <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-sm btn-success">View</a>
 
       <a sec:authorize="hasAnyRole('ADMIN', 'MANAGER')"
          th:href="@{/products/{id}/edit(id=${product.id})}"

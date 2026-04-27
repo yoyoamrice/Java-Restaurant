@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')") // 🔥 ALL methods restricted
+@PreAuthorize("hasRole('ADMIN')")
 public class ProductCategoryController {
 
 	private final ProductCategoryService categoryService;

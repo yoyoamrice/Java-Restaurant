@@ -1,18 +1,16 @@
-package org.springframework.samples.petclinic.user; // Ensure this is correct!
+package org.springframework.samples.petclinic.user;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
@@ -30,51 +28,48 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable) // Fixed the disable syntax
+		http.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(authorize -> authorize
 
-				// --- 1. PRODUCT & RECIPE RESTRICTIONS (First Priority) ---
+				// --- 1. PRODUCT & RECIPE RESTRICTIONS ---
 
-				// DELETE: Only Admin
-				.requestMatchers("/products/{id}/delete", "/product-recipes/{id}/delete")
+				// DELETE: Restricted only to Admin. Note the use of "*" for the ID.
+				.requestMatchers("/products/*/delete", "/product-recipes/*/delete")
 				.hasRole("ADMIN")
 
-				// CREATE & EDIT: Admin and Manager
-				.requestMatchers("/products/new", "/products/{id}/edit", "/product-recipes/new")
+				// CREATE & EDIT: Both Admin and Manager can access the forms.
+				// Added "/products/*/edit" to catch existing product updates.
+				.requestMatchers("/products/new", "/products/*/edit", "/product-recipes/new", "/product-recipes/*/edit")
 				.hasAnyRole("ADMIN", "MANAGER")
 
-				// POST/PUT: Ensure they can actually save the forms
+				// FORM SUBMISSIONS: Ensure both roles can POST data back to the server.
 				.requestMatchers(HttpMethod.POST, "/products/**", "/product-recipes/**")
 				.hasAnyRole("ADMIN", "MANAGER")
+
 				.requestMatchers(HttpMethod.PUT, "/product-recipes/**")
 				.hasAnyRole("ADMIN", "MANAGER")
 
 				// --- 2. EXISTING SCHOOL & USER CONFIGS ---
 
-				.requestMatchers("/users/profile", "/users/delete")
-				.authenticated()
-				.requestMatchers("/schools/new")
-				.hasAuthority("MANAGE_ALL_SCHOOLS")
-				.requestMatchers(HttpMethod.GET, "/schools", "/schools/{slug:[a-zA-Z-]+}")
-				.permitAll()
+				.requestMatchers("/users/profile", "/users/delete").authenticated()
+				.requestMatchers("/schools/new").hasAuthority("MANAGE_ALL_SCHOOLS")
+				.requestMatchers(HttpMethod.GET, "/schools", "/schools/{slug:[a-zA-Z-]+}").permitAll()
 
 				// --- 3. PUBLIC & GENERAL ACCESS ---
 
-				.requestMatchers("/", "/register-student", "/register", "/login", "/resources/**", "/recipes/**",
-					"/recipes/new", "/pets/**", "/vets/**", "/vets.html", "/products", // List
-					// view
-					// is
-					// public
-					"/products/{id}", // Single product view is public
-					"/product-recipes", "/api/**")
-				.permitAll()
+				.requestMatchers(
+					"/", "/register-student", "/register", "/login", "/resources/**",
+					"/recipes/**", "/recipes/new", "/pets/**", "/vets/**", "/vets.html",
+					"/products",        // List view
+					"/products/*",      // Single product detail view
+					"/product-recipes",
+					"/api/**"
+				).permitAll()
 
-				// Fallback for any other GET requests
-				.requestMatchers(HttpMethod.GET)
-				.permitAll()
-				// Everything else requires authentication
-				.anyRequest()
-				.authenticated())
+				// Fallback for any other GET requests and general authentication
+				.requestMatchers(HttpMethod.GET).permitAll()
+				.anyRequest().authenticated()
+			)
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.formLogin(form -> form.loginPage("/login")
 				.usernameParameter("email")
@@ -88,5 +83,4 @@ public class SecurityConfig {
 
 		return http.build();
 	}
-
 }
