@@ -19,7 +19,6 @@ import java.util.List;
 public class LocationController {
 
 	private final SchoolRepository schoolRepository;
-
 	private final LocationRepository locationRepository;
 
 	public LocationController(SchoolRepository schoolRepository, LocationRepository locationRepository) {
@@ -27,8 +26,7 @@ public class LocationController {
 		this.locationRepository = locationRepository;
 	}
 
-	// This executes before every route in this controller to populate the school and
-	// check permissions
+	// This executes before every route in this controller to populate the school and check permissions
 	@ModelAttribute("school")
 	public School findSchoolAndVerifyPermissions(@PathVariable("schoolId") int schoolId) {
 		School school = schoolRepository.findById(schoolId)
@@ -40,15 +38,13 @@ public class LocationController {
 		}
 
 		String userEmail = auth.getName();
-		boolean isSuperAdmin = auth.getAuthorities()
-			.stream()
+		boolean isSuperAdmin = auth.getAuthorities().stream()
 			.anyMatch(a -> a.getAuthority().equals("MANAGE_ALL_SCHOOLS"));
-		boolean isSchoolAdmin = auth.getAuthorities()
-			.stream()
+		boolean isSchoolAdmin = auth.getAuthorities().stream()
 			.anyMatch(a -> a.getAuthority().equals("MANAGE_FACILITIES"));
 
-		boolean belongsToSchool = userEmail.endsWith("@" + school.getDomain())
-				|| userEmail.endsWith("." + school.getDomain());
+		boolean belongsToSchool = userEmail.endsWith("@" + school.getDomain()) ||
+			userEmail.endsWith("." + school.getDomain());
 
 		if (!isSuperAdmin && !(isSchoolAdmin && belongsToSchool)) {
 			throw new AccessDeniedException("You do not have permission to manage facilities for this school.");
@@ -60,8 +56,7 @@ public class LocationController {
 	// Injects the list of potential parent locations into the Thymeleaf model
 	@ModelAttribute("parentLocations")
 	public List<Location> populateParentLocations(School school, @PathVariable(required = false) Integer locationId) {
-		return school.getLocations()
-			.stream()
+		return school.getLocations().stream()
 			// 1. Filter out the blank, unsaved location used for form binding
 			.filter(loc -> loc.getId() != null)
 			// 2. Filter out the current location being edited to prevent infinite loops
@@ -100,13 +95,13 @@ public class LocationController {
 
 	@PostMapping("/{locationId}/edit")
 	public String processUpdateForm(@Valid Location location, BindingResult result, School school,
-			@PathVariable("locationId") int locationId, ModelMap model) {
+									@PathVariable("locationId") int locationId, ModelMap model) {
 		if (result.hasErrors()) {
-			location.setId((long) locationId);
+			location.setId(locationId);
 			model.put("location", location);
 			return "schools/createOrUpdateLocationForm";
 		}
-		location.setId((long) locationId);
+		location.setId(locationId);
 		school.addLocation(location);
 		locationRepository.save(location);
 
@@ -116,8 +111,7 @@ public class LocationController {
 
 	@PostMapping("/{locationId}/delete")
 	@Transactional
-	public String processDeleteForm(@PathVariable("schoolId") int schoolId,
-			@PathVariable("locationId") int locationId) {
+	public String processDeleteForm(@PathVariable("schoolId") int schoolId, @PathVariable("locationId") int locationId) {
 		Location location = locationRepository.findById(locationId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
 
@@ -136,5 +130,6 @@ public class LocationController {
 
 		return "redirect:/schools/" + schoolId;
 	}
+
 
 }
